@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BuildSync Pro — UX Prototype</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #0F1A2E; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif; }
+
+  /* ── Landing page ── */
+  #landing {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background: linear-gradient(160deg, #0F1A2E 0%, #1A2744 60%, #0F1A2E 100%);
+  }
+  #landing .wordmark {
+    font-size: 13px; font-weight: 700; letter-spacing: 3px; color: #8BA4C8;
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+  #landing h1 {
+    font-size: clamp(28px, 6vw, 42px); font-weight: 800; color: #fff;
+    text-align: center; line-height: 1.15; margin-bottom: 10px;
+  }
+  #landing h1 span { color: #0D9488; }
+  #landing .sub {
+    font-size: 15px; color: #8BA4C8; text-align: center; max-width: 420px;
+    line-height: 1.6; margin-bottom: 48px;
+  }
+  .portal-cards {
+    display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+    max-width: 560px; width: 100%;
+  }
+  .portal-card {
+    flex: 1; min-width: 220px; max-width: 260px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px; padding: 28px 24px;
+    cursor: pointer; transition: all 0.2s; text-align: center;
+    text-decoration: none;
+  }
+  .portal-card:hover { background: rgba(255,255,255,0.09); transform: translateY(-2px); border-color: rgba(255,255,255,0.2); }
+  .portal-card .emoji { font-size: 36px; margin-bottom: 14px; display: block; }
+  .portal-card h2 { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .portal-card p { font-size: 13px; color: #8BA4C8; line-height: 1.5; margin-bottom: 20px; }
+  .portal-card .pill {
+    display: inline-block; padding: 8px 20px; border-radius: 30px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  .pill-teal { background: #0D9488; color: #fff; }
+  .pill-amber { background: #E8913A; color: #fff; }
+
+  #landing .note {
+    margin-top: 40px; font-size: 12px; color: #475569; text-align: center;
+    max-width: 360px; line-height: 1.6;
+  }
+
+  /* ── App view ── */
+  #app-view {
+    display: none;
+    min-height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(160deg, #0F1A2E 0%, #1A2744 100%);
+    padding: 20px 16px 40px;
+  }
+  .app-topbar {
+    width: 100%; max-width: 440px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .back-btn {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600; color: #8BA4C8;
+    cursor: pointer; padding: 6px 12px 6px 8px;
+    border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05); transition: all 0.15s;
+    text-decoration: none;
+  }
+  .back-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .back-arrow { font-size: 16px; }
+  .portal-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    color: #8BA4C8; text-transform: uppercase;
+  }
+  #react-root { width: 100%; max-width: 440px; }
+
+  @keyframes fabPulse {
+    0%   { transform: scale(1);    opacity: 0.7; }
+    70%  { transform: scale(1.55); opacity: 0; }
+    100% { transform: scale(1.55); opacity: 0; }
+  }
+  @media (max-width: 480px) {
+    .portal-card { min-width: 100%; }
+    #landing { padding: 32px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Landing ── -->
+<div id="landing">
+  <div class="wordmark">BuildSync Pro</div>
+  <h1>UX <span>Prototype</span></h1>
+  <p class="sub">Interactive mobile app prototype. Choose a portal below to explore the full experience.</p>
+
+  <div class="portal-cards">
+    <div class="portal-card" onclick="launch('homeowner')">
+      <span class="emoji">🏠</span>
+      <h2>Homeowner</h2>
+      <p>Track your build, budget, decisions, warranty claims and message your project team.</p>
+      <span class="pill pill-teal">Open app →</span>
+    </div>
+    <div class="portal-card" onclick="launch('company')">
+      <span class="emoji">🏗️</span>
+      <h2>Company</h2>
+      <p>Manage projects, crew, finance, site QC, subcontractors and client communications.</p>
+      <span class="pill pill-amber">Open app →</span>
+    </div>
+  </div>
+
+  <p class="note">This is an interactive prototype — all buttons, tabs, drawers, and the AI assistant are fully clickable. For best experience open on desktop or a mobile device.</p>
+</div>
+
+<!-- ── App view ── -->
+<div id="app-view">
+  <div class="app-topbar">
+    <div class="back-btn" onclick="goBack()">
+      <span class="back-arrow">←</span> All portals
+    </div>
+    <div class="portal-label" id="portal-label"></div>
+    <div style="width:90px"></div>
+  </div>
+  <div id="react-root"></div>
+</div>
+
+<script>
+  var currentPortal = null;
+  function launch(portal) {
+    currentPortal = portal;
+    document.getElementById('landing').style.display = 'none';
+    var av = document.getElementById('app-view');
+    av.style.display = 'flex';
+    document.getElementById('portal-label').textContent = portal === 'homeowner' ? '🏠 Homeowner' : '🏗️ Company';
+    renderApp(portal);
+  }
+  function goBack() {
+    document.getElementById('app-view').style.display = 'none';
+    document.getElementById('landing').style.display = 'flex';
+    var root = document.getElementById('react-root');
+    ReactDOM.unmountComponentAtNode(root);
+  }
+  function renderApp(portal) {
+    var scriptId = portal === 'homeowner' ? 'homeowner-src' : 'company-src';
+    var src = document.getElementById(scriptId).innerHTML;
+    var code = Babel.transform(src, { presets: ['react'] }).code;
+    eval(code);
+    var Component = portal === 'homeowner' ? HomeownerApp : CompanyApp;
+    ReactDOM.render(React.createElement(Component), document.getElementById('react-root'));
+  }
+</script>
+
+<!-- ── Homeowner source (compiled by Babel on demand) ── -->
+<script type="text/plain" id="homeowner-src">
+// BuildSync Pro — Homeowner App
+// Portal color: Teal (#0D9488)
+const { useState } = React;
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DESIGN TOKENS
+// ══════════════════════════════════════════════════════════════════════════════
+const C = {
+  navy: "#1A2744", darkNavy: "#0F1A2E", accent: "#E8913A", teal: "#0D9488",
+  blue: "#3B82F6", green: "#10B981", red: "#EF4444", amber: "#F59E0B",
+  purple: "#7C3AED", white: "#FFFFFF", offWhite: "#F8F9FC", lightGray: "#E2E8F0",
+  midGray: "#94A3B8", darkGray: "#475569", text: "#1E293B",
+};
+const PC = C.teal; // portal accent
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ICON SYSTEM
+// ══════════════════════════════════════════════════════════════════════════════
+const paths = {
+  home:      "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
+  camera:    "M12 15.2A3.2 3.2 0 1 0 12 8.8a3.2 3.2 0 0 0 0 6.4zM9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9z",
+  punch:     "M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z",
+  menu:      "M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z",
+  close:     "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z",
+  chevron:   "M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z",
+  send:      "M2.01 21L23 12 2.01 3 2 10l15 2-15 2z",
+  search:    "M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z",
+  check:     "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z",
+  warning:   "M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z",
+  chart:     "M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z",
+  finance:   "M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z",
+  doc:       "M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z",
+  msg:       "M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z",
+  bell:      "M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z",
+  lock:      "M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z",
+  shield:    "M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z",
+  wrench:    "M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z",
+  milestone: "M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z",
+  panorama:  "M12 6.5c2.76 0 5 2.24 5 5 0 .51-.1 1-.24 1.46l3.06 3.06c1.39-1.23 2.49-2.77 3.18-4.53C21.27 7.11 17 4 12 4c-1.27 0-2.49.2-3.64.57l2.65 2.65C11 7.1 11.49 6.5 12 6.5zM2.71 3.16L1.29 4.57 4.18 7.46C2.61 8.72 1.38 10.38.64 12.28 2.18 16.41 6.26 19.5 11 19.5c1.52 0 2.97-.3 4.31-.82l3.18 3.18 1.41-1.41L2.71 3.16z",
+  change:    "M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z",
+  annotate:  "M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83zM3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z",
+  gift:      "M20 6h-2.18c.07-.31.18-.62.18-.97C18 3.35 16.64 2 15.03 2c-.88 0-1.65.39-2.18.99L12 4.39l-.85-.4C10.62 3.39 9.85 3 8.97 3 7.36 3 6 4.35 6 5.97c0 .35.1.66.18.97H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-5-.5c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-6 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 13H4v-2h16v2zm0-5H4V8h5.08L7 10.17 8.41 11.5 11 8.91l1-1 1 1 2.59 2.59L17 10.17 14.92 8H20v6z",
+  aibot:     "M21 10.5h-.5V8c0-1.1-.9-2-2-2h-5V4.5c.58-.35 1-.98 1-1.5 0-1.1-.9-2-2-2s-2 .9-2 2c0 .52.42 1.15 1 1.5V6H6c-1.1 0-2 .9-2 2v2.5H3.5c-.28 0-.5.22-.5.5v3c0 .28.22.5.5.5H4V17c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-2.5h.5c.28 0 .5-.22.5-.5v-3c0-.28-.22-.5-.5-.5zM9 14.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm6 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z",
+};
+const Icon = ({ type, size = 18, color = C.midGray }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill={color} style={{ flexShrink: 0 }}>
+    <path d={paths[type] || paths.home} />
+  </svg>
+);
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PRIMITIVES
+// ══════════════════════════════════════════════════════════════════════════════
+const Badge = ({ children, color = PC }) => (
+  <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 20, background: color + "18", color, whiteSpace: "nowrap" }}>{children}</span>
+);
+const Bar = ({ pct, color = PC, h = 5 }) => (
+  <div style={{ background: C.lightGray, borderRadius: h, height: h, width: "100%", overflow: "hidden" }}>
+    <div style={{ background: color, borderRadius: h, height: h, width: `${Math.min(100, pct)}%` }} />
+  </div>
+);
+const Tile = ({ label, value, color = C.navy, icon }) => (
+  <div style={{ flex: 1, background: C.offWhite, borderRadius: 12, padding: "10px 10px 8px" }}>
+    {icon && <Icon type={icon} size={12} color={color} />}
+    <div style={{ fontSize: 20, fontWeight: 700, color, marginTop: icon ? 4 : 0, lineHeight: 1.1 }}>{value}</div>
+    <div style={{ fontSize: 10, color: C.midGray, marginTop: 2, fontWeight: 500 }}>{label}</div>
+  </div>
+);
+const SectionLabel = ({ children, action, onAction }) => (
+  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+    <span style={{ fontSize: 11, fontWeight: 700, color: C.midGray, textTransform: "uppercase", letterSpacing: 0.6 }}>{children}</span>
+    {action && <span onClick={onAction} style={{ fontSize: 11, color: PC, fontWeight: 600, cursor: "pointer" }}>{action} →</span>}
+  </div>
+);
+const Seg = ({ options, value, onChange }) => (
+  <div style={{ display: "flex", background: C.offWhite, borderRadius: 10, padding: 3, marginBottom: 14 }}>
+    {options.map(o => (
+      <div key={o} onClick={() => onChange(o)} style={{
+        flex: 1, textAlign: "center", padding: "7px 0", borderRadius: 8, cursor: "pointer",
+        fontSize: 11, fontWeight: value === o ? 700 : 400,
+        color: value === o ? C.text : C.midGray,
+        background: value === o ? C.white : "transparent",
+        boxShadow: value === o ? "0 1px 4px rgba(0,0,0,0.09)" : "none",
+        transition: "all 0.15s",
+      }}>{o}</div>
+    ))}
+  </div>
+);
+const DrawerRow = ({ icon, label, sub, color, badge, last, onPress }) => (
+  <div onClick={onPress} style={{ display: "flex", alignItems: "center", gap: 13, padding: "12px 20px", borderBottom: last ? "none" : `1px solid ${C.lightGray}`, cursor: "pointer", background: C.white }}>
+    <div style={{ width: 38, height: 38, borderRadius: 11, background: color + "12", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+      <Icon type={icon} size={18} color={color} />
+    </div>
+    <div style={{ flex: 1 }}>
+      <div style={{ fontSize: 14, fontWeight: 500, color: C.text }}>{label}</div>
+      {sub && <div style={{ fontSize: 11, color: C.midGray, marginTop: 1 }}>{sub}</div>}
+    </div>
+    {badge && <Badge color={badge.color || color}>{badge.text}</Badge>}
+    <Icon type="chevron" size={16} color={C.lightGray} />
+  </div>
+);
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DRAWER SHELL
+// ══════════════════════════════════════════════════════════════════════════════
+const Drawer = ({ open, onClose, title, subtitle, children }) => (
+  <>
+    <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(10,20,40,0.45)", zIndex: 10, opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.25s" }} />
+    <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: C.white, borderRadius: "20px 20px 0 0", zIndex: 11, maxHeight: "88%", display: "flex", flexDirection: "column", transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.28s cubic-bezier(0.32,0.72,0,1)" }}>
+      <div style={{ display: "flex", justifyContent: "center", padding: "10px 0 0" }}>
+        <div style={{ width: 36, height: 4, borderRadius: 2, background: C.lightGray }} />
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "14px 20px 10px" }}>
+        <div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: C.navy }}>{title}</div>
+          {subtitle && <div style={{ fontSize: 12, color: C.midGray, marginTop: 2 }}>{subtitle}</div>}
+        </div>
+        <div onClick={onClose} style={{ width: 32, height: 32, borderRadius: "50%", background: C.offWhite, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
+          <Icon type="close" size={16} color={C.midGray} />
+        </div>
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", paddingBottom: 24 }}>{children}</div>
+    </div>
+  </>
+);
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SHARED DRAWER SCREENS
+// ══════════════════════════════════════════════════════════════════════════════
+const DrawerMessages = () => {
+  const [msg, setMsg] = useState("");
+  const [messages, setMessages] = useState([
+    { from: "Mike (PM)", text: "Electrical rough-in is done on 2nd floor!", time: "2:15 PM", mine: false },
+    { from: "You", text: "Great — any update on the fixture deadline?", time: "2:20 PM", mine: true },
+    { from: "Mike (PM)", text: "Kitchen & bath choices needed by Apr 5 to stay on schedule.", time: "2:22 PM", mine: false },
+  ]);
+  const send = () => { if (!msg.trim()) return; setMessages(m => [...m, { from: "You", text: msg, time: "Now", mine: true }]); setMsg(""); };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: 380, padding: "0 20px" }}>
+      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, paddingBottom: 8 }}>
+        {messages.map((m, i) => (
+          <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: m.mine ? "flex-end" : "flex-start" }}>
+            {!m.mine && <span style={{ fontSize: 10, color: C.midGray, marginBottom: 2 }}>{m.from}</span>}
+            <div style={{ maxWidth: "80%", background: m.mine ? PC : C.offWhite, color: m.mine ? C.white : C.text, borderRadius: m.mine ? "14px 14px 3px 14px" : "14px 14px 14px 3px", padding: "9px 13px", fontSize: 13, lineHeight: 1.4 }}>{m.text}</div>
+            <span style={{ fontSize: 9, color: C.midGray, marginTop: 2 }}>{m.time}{m.mine ? " ✓✓" : ""}</span>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: 8, background: C.offWhite, borderRadius: 24, padding: "7px 7px 7px 14px", border: `1px solid ${C.lightGray}` }}>
+        <input value={msg} onChange={e => setMsg(e.target.value)} onKeyDown={e => e.key === "Enter" && send()} placeholder="Message..." style={{ flex: 1, border: "none", background: "transparent", fontSize: 13, outline: "none", color: C.text }} />
+        <div onClick={send} style={{ width: 34, height: 34, borderRadius: "50%", background: PC, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}><Icon type="send" size={15} color={C.white} /></div>
+      </div>
+    </div>
+  );
+};
+
+const DrawerDocs = () => {
+  const docs = [
+    { name: "Construction contract", type: "PDF", status: "Signed", date: "Jan 15", color: C.green },
+    { name: "Change order #3", type: "PDF", status: "Sign needed", date: "Mar 28", color: C.accent },
+    { name: "Site plan v4", type: "DWG", status: "Current", date: "Mar 10", color: C.blue },
+    { name: "Electrical permit", type: "PDF", status: "Approved", date: "Feb 1", color: C.green },
+    { name: "Warranty deed", type: "PDF", status: "Signed", date: "Jan 15", color: C.green },
+  ];
+  return (
+    <div style={{ padding: "0 20px" }}>
+      <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+        {["All", "Contracts", "Permits", "Changes"].map((t, i) => (
+          <div key={t} style={{ fontSize: 11, padding: "5px 10px", borderRadius: 20, background: i === 0 ? C.navy : C.offWhite, color: i === 0 ? C.white : C.midGray, fontWeight: 600, cursor: "pointer" }}>{t}</div>
+        ))}
+      </div>
+      {docs.map((d, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: i < docs.length - 1 ? `1px solid ${C.lightGray}` : "none" }}>
+          <div style={{ width: 36, height: 36, borderRadius: 9, background: d.color + "12", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Icon type="doc" size={16} color={d.color} /></div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 500, color: C.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.name}</div>
+            <div style={{ fontSize: 11, color: C.midGray }}>{d.type} • {d.date}</div>
+          </div>
+          <Badge color={d.color}>{d.status}</Badge>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const DrawerChangeOrders = () => {
+  const orders = [
+    { id: "CO-003", title: "HVAC system upgrade", amount: "+$8,400", status: "Awaiting approval", color: C.accent },
+    { id: "CO-002", title: "Kitchen island extension", amount: "+$3,200", status: "Approved", color: C.green },
+    { id: "CO-001", title: "Remove interior wall", amount: "+$1,800", status: "Approved", color: C.green },
+  ];
+  return (
+    <div style={{ padding: "0 20px" }}>
+      {orders.map((o, i) => (
+        <div key={i} style={{ background: C.offWhite, borderRadius: 12, padding: "11px 13px", marginBottom: 8, borderLeft: `3px solid ${o.color}` }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{o.title}</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: o.color }}>{o.amount}</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: 11, color: C.midGray }}>{o.id}</span>
+            <Badge color={o.color}>{o.status}</Badge>
+          </div>
+          {o.status === "Awaiting approval" && (
+            <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
+              <div style={{ flex: 1, padding: "7px 0", textAlign: "center", borderRadius: 8, background: C.green + "10", color: C.green, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Approve</div>
+              <div style={{ flex: 1, padding: "7px 0", textAlign: "center", borderRadius: 8, background: C.red + "10", color: C.red, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Decline</div>
+            </div>
+          )}
+        </div>
+      ))}
+      <div style={{ padding: "11px 0", textAlign: "center", borderRadius: 12, border: `1.5px dashed ${C.lightGray}`, color: PC, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>+ Request a change</div>
+    </div>
+  );
+};
+
+const DrawerDoorAccess = () => (
+  <div style={{ padding: "0 20px" }}>
+    <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+      {[{ l: "Front door", c: C.red }, { l: "Side gate", c: C.red }, { l: "Garage", c: C.red }].map((d, i) => (
+        <div key={i} style={{ flex: 1, background: C.offWhite, borderRadius: 12, padding: 12, textAlign: "center", border: `1px solid ${C.lightGray}`, cursor: "pointer" }}>
+          <div style={{ width: 40, height: 40, borderRadius: "50%", background: d.c + "10", border: `2px solid ${d.c}`, margin: "0 auto 8px", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon type="lock" size={18} color={d.c} /></div>
+          <div style={{ fontSize: 11, fontWeight: 600, color: C.navy }}>{d.l}</div>
+          <div style={{ fontSize: 10, color: d.c }}>Locked</div>
+          <div style={{ fontSize: 9, color: PC, marginTop: 4, fontWeight: 700 }}>TAP UNLOCK</div>
+        </div>
+      ))}
+    </div>
+    <SectionLabel>Entry log</SectionLabel>
+    {[{ t: "Today 2:15 PM", m: "App", d: "Front door" }, { t: "Today 8:45 AM", m: "Face ID", d: "Front door" }, { t: "Yesterday 6:30 PM", m: "App", d: "Garage" }].map((a, i) => (
+      <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "9px 0", borderTop: `1px solid ${C.lightGray}`, fontSize: 12 }}>
+        <span style={{ color: C.text }}>{a.d} — {a.m}</span>
+        <span style={{ color: C.midGray }}>{a.t}</span>
+      </div>
+    ))}
+  </div>
+);
+
+const DrawerPhotoAnnotate = () => {
+  const [color, setColor] = useState(C.red);
+  return (
+    <div style={{ padding: "0 20px" }}>
+      <div style={{ background: "#0F1A2E", borderRadius: 12, height: 170, position: "relative", marginBottom: 12, overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}><Icon type="camera" size={28} color={C.midGray} /></div>
+        <div style={{ position: "absolute", top: 22, left: 32, width: 80, height: 52, border: `2px solid ${C.red}`, borderRadius: 4 }} />
+        <div style={{ position: "absolute", top: 19, left: 30, background: C.red, color: C.white, fontSize: 9, fontWeight: 700, padding: "2px 5px", borderRadius: 3 }}>Issue #1</div>
+        <div style={{ position: "absolute", bottom: 55, right: 44, width: 60, height: 38, border: `2px solid ${C.accent}`, borderRadius: 4 }} />
+        <div style={{ position: "absolute", bottom: 92, right: 42, background: C.accent, color: C.white, fontSize: 9, fontWeight: 700, padding: "2px 5px", borderRadius: 3 }}>Issue #2</div>
+      </div>
+      <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
+        {[C.red, C.accent, C.blue, C.green].map(c => (
+          <div key={c} onClick={() => setColor(c)} style={{ width: 22, height: 22, borderRadius: "50%", background: c, border: color === c ? `2.5px solid ${C.navy}` : "2.5px solid transparent", cursor: "pointer" }} />
+        ))}
+        <div style={{ flex: 1 }} />
+        {["Rect", "Arrow", "Text"].map(t => <div key={t} style={{ fontSize: 11, padding: "5px 10px", borderRadius: 8, background: C.offWhite, color: C.darkGray, cursor: "pointer" }}>{t}</div>)}
+      </div>
+      {[{ id: 1, note: "Exposed wire — needs conduit before drywall", color: C.red }, { id: 2, note: "HVAC duct misaligned, confirm with drawings", color: C.accent }].map((a, i) => (
+        <div key={i} style={{ display: "flex", gap: 8, padding: "9px 0", borderTop: `1px solid ${C.lightGray}` }}>
+          <div style={{ width: 12, height: 12, borderRadius: 3, background: a.color, flexShrink: 0, marginTop: 2 }} />
+          <div style={{ fontSize: 12, color: C.text }}>#{a.id} — {a.note}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const DrawerReferral = () => (
+  <div style={{ padding: "0 20px" }}>
+    <div style={{ textAlign: "center", padding: "8px 0 16px" }}>
+      <div style={{ width: 60, height: 60, borderRadius: "50%", background: C.amber + "15", margin: "0 auto 10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Icon type="gift" size={26} color={C.amber} />
+      </div>
+      <div style={{ fontSize: 13, color: C.midGray, lineHeight: 1.5 }}>Earn <strong style={{ color: C.navy }}>$500 in upgrades</strong> for every friend who builds with us</div>
+    </div>
+    <div style={{ background: C.amber + "08", border: `1px solid ${C.amber}25`, borderRadius: 12, padding: "14px 16px", marginBottom: 14, textAlign: "center" }}>
+      <div style={{ fontSize: 11, color: C.midGray, marginBottom: 4 }}>Your referral code</div>
+      <div style={{ fontSize: 22, fontWeight: 700, color: C.navy, letterSpacing: 3 }}>CARTER500</div>
+      <div style={{ fontSize: 11, color: PC, marginTop: 4, cursor: "pointer", fontWeight: 600 }}>Tap to copy</div>
+    </div>
+    <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+      <input placeholder="Friend's email" style={{ flex: 1, border: `1px solid ${C.lightGray}`, borderRadius: 10, padding: "10px 12px", fontSize: 13, outline: "none", color: C.text }} />
+      <div style={{ padding: "10px 16px", borderRadius: 10, background: C.accent, color: C.white, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Invite</div>
+    </div>
+    {[{ name: "Sarah Williams", status: "Signed contract", reward: "$500", color: C.green }, { name: "Tom Anderson", status: "In consultation", reward: "Pending", color: C.amber }].map((r, i) => (
+      <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderTop: `1px solid ${C.lightGray}` }}>
+        <div><div style={{ fontSize: 13, fontWeight: 500, color: C.text }}>{r.name}</div><Badge color={r.color}>{r.status}</Badge></div>
+        <span style={{ fontSize: 15, fontWeight: 700, color: r.color }}>{r.reward}</span>
+      </div>
+    ))}
+  </div>
+);
+
+const DrawerSearch = () => {
+  const [q, setQ] = useState("");
+  const results = [
+    { type: "Update", title: "Electrical rough-in complete — 2nd floor", sub: "Mike D. • Today", icon: "camera", color: PC },
+    { type: "Document", title: "Change order #3", sub: "PDF • Mar 28", icon: "doc", color: C.blue },
+    { type: "Warranty", title: "Kitchen faucet leak — WR-401", sub: "Tech assigned • Mar 24", icon: "wrench", color: C.accent },
+    { type: "Milestone", title: "Electrical inspection — Apr 4", sub: "Upcoming", icon: "milestone", color: C.navy },
+  ];
+  return (
+    <div style={{ padding: "0 20px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, background: C.offWhite, borderRadius: 12, padding: "10px 14px", marginBottom: 16, border: `1px solid ${C.lightGray}` }}>
+        <Icon type="search" size={16} color={C.midGray} />
+        <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search updates, docs, claims…" style={{ flex: 1, border: "none", background: "transparent", fontSize: 13, outline: "none", color: C.text }} />
+      </div>
+      {results.map((r, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: i < results.length - 1 ? `1px solid ${C.lightGray}` : "none", cursor: "pointer" }}>
+          <div style={{ width: 34, height: 34, borderRadius: 9, background: r.color + "12", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Icon type={r.icon} size={15} color={r.color} /></div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 13, fontWeight: 500, color: C.text }}>{r.title}</div>
+            <div style={{ fontSize: 11, color: C.midGray }}>{r.sub}</div>
+          </div>
+          <Badge color={r.color}>{r.type}</Badge>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const DrawerNotifPrefs = () => {
+  const [prefs, setPrefs] = useState({ updates: true, milestones: true, warranty: true, messages: true, documents: false, budget: false });
+  const toggle = k => setPrefs(p => ({ ...p, [k]: !p[k] }));
+  return (
+    <div style={{ padding: "0 20px" }}>
+      {[{ key: "updates", label: "Progress updates", sub: "Photos, daily logs" }, { key: "milestones", label: "Milestones & inspections", sub: "Phase completions" }, { key: "warranty", label: "Warranty claims", sub: "Status changes" }, { key: "messages", label: "New messages", sub: "Direct messages" }, { key: "documents", label: "Document uploads", sub: "New files added" }, { key: "budget", label: "Budget alerts", sub: "Overages, change orders" }].map((item, i, arr) => (
+        <div key={item.key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "13px 0", borderBottom: i < arr.length - 1 ? `1px solid ${C.lightGray}` : "none" }}>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 500, color: C.text }}>{item.label}</div>
+            <div style={{ fontSize: 11, color: C.midGray, marginTop: 1 }}>{item.sub}</div>
+          </div>
+          <div onClick={() => toggle(item.key)} style={{ width: 42, height: 24, borderRadius: 12, background: prefs[item.key] ? PC : C.lightGray, position: "relative", cursor: "pointer", transition: "background 0.2s", flexShrink: 0 }}>
+            <div style={{ width: 18, height: 18, borderRadius: "50%", background: C.white, position: "absolute", top: 3, left: prefs[item.key] ? 21 : 3, transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+// AI ASSISTANT — HOMEOWNER
+// ══════════════════════════════════════════════════════════════════════════════
+const DrawerAI = () => {
+  const [input, setInput] = useState("");
+  const [chat, setChat] = useState([
+    { role: "ai", text: "Hi John! I know everything about your Riverside Residence build. Ask me about timelines, budget, selections, or what's coming next." },
+    { role: "user", text: "When does drywall start?" },
+    { role: "ai", text: "Drywall is scheduled for April 8 — 9 days away. It's contingent on the electrical inspection passing on April 4, which you're on track for at 78% complete." },
+  ]);
+  const ask = (q) => {
+    const question = q || input;
+    if (!question.trim()) return;
+    setChat(c => [...c, { role: "user", text: question }, { role: "ai", text: "Looking that up from your project data…" }]);
+    setInput("");
+  };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: 380, padding: "0 20px" }}>
+      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, paddingBottom: 8 }}>
+        {chat.map((m, i) => (
+          <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: m.role === "user" ? "flex-end" : "flex-start" }}>
+            <div style={{ maxWidth: "85%", background: m.role === "user" ? C.purple : C.offWhite, color: m.role === "user" ? C.white : C.text, borderRadius: m.role === "user" ? "14px 14px 3px 14px" : "14px 14px 14px 3px", padding: "9px 13px", fontSize: 13, lineHeight: 1.55 }}>{m.text}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 8 }}>
+        {["When's move-in?", "Am I on budget?", "What's next?"].map(q => (
+          <div key={q} onClick={() => ask(q)} style={{ fontSize: 11, padding: "5px 10px", borderRadius: 20, border: `1px solid ${C.purple}30`, color: C.purple, cursor: "pointer", background: C.purple + "08" }}>{q}</div>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: 8, background: C.offWhite, borderRadius: 24, padding: "7px 7px 7px 14px", border: `1px solid ${C.lightGray}` }}>
+        <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && ask()} placeholder="Ask about your build…" style={{ flex: 1, border: "none", background: "transparent", fontSize: 13, outline: "none", color: C.text }} />
+        <div onClick={() => ask()} style={{ width: 34, height: 34, borderRadius: "50%", background: C.purple, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}><Icon type="send" size={15} color={C.white} /></div>
+      </div>
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PRIMARY SCREENS
+// ══════════════════════════════════════════════════════════════════════════════
+const ScreenHome = ({ openDrawer }) => (
+  <div>
+    <div style={{ background: `linear-gradient(140deg,${C.navy} 0%,#243860 100%)`, borderRadius: 18, padding: "16px 16px 14px", marginBottom: 14, color: C.white }}>
+      <div style={{ fontSize: 11, color: "#8BA4C8", marginBottom: 2, fontWeight: 600 }}>Riverside Residence • RC-2026-041</div>
+      <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Your build is on track 🏗️</div>
+      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+        {[{ l: "Complete", v: "64%" }, { l: "Days left", v: "87" }, { l: "On budget", v: "✓" }].map(s => (
+          <div key={s.l} style={{ flex: 1, background: "rgba(255,255,255,0.08)", borderRadius: 8, padding: "7px 6px", textAlign: "center" }}>
+            <div style={{ fontSize: 16, fontWeight: 700 }}>{s.v}</div>
+            <div style={{ fontSize: 9, color: "#8BA4C8", marginTop: 1 }}>{s.l}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ height: 6, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden", marginBottom: 6 }}>
+        <div style={{ width: "64%", height: "100%", background: PC, borderRadius: 6 }} />
+      </div>
+      <div style={{ fontSize: 10, color: "#8BA4C8" }}>Next: Electrical inspection — Apr 4</div>
+    </div>
+    <div onClick={() => openDrawer("decisions")} style={{ background: C.accent + "08", border: `1px solid ${C.accent}28`, borderRadius: 13, padding: "10px 13px", marginBottom: 14, display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
+      <div style={{ width: 36, height: 36, borderRadius: 10, background: C.accent + "15", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Icon type="punch" size={18} color={C.accent} /></div>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>2 selections needed</div>
+        <div style={{ fontSize: 11, color: C.midGray }}>Kitchen & bath fixtures due Apr 5</div>
+      </div>
+      <Icon type="chevron" size={16} color={C.accent} />
+    </div>
+    <SectionLabel action="See all" onAction={() => openDrawer("updates_more")}>Latest update</SectionLabel>
+    <div style={{ background: C.offWhite, borderRadius: 13, padding: "11px 13px", marginBottom: 14 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>Mike D.</span>
+        <span style={{ fontSize: 11, color: C.midGray }}>Today 2:15 PM</span>
+      </div>
+      <div style={{ fontSize: 12, color: C.darkGray, marginBottom: 8 }}>Electrical rough-in complete — 2nd floor ✓</div>
+      <div style={{ display: "flex", gap: 4 }}>{[1,2,3].map(n => <div key={n} style={{ flex: 1, height: 56, background: C.lightGray, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}><Icon type="camera" size={13} color={C.midGray} /></div>)}</div>
+    </div>
+    <SectionLabel>Build phases</SectionLabel>
+    {[{ n: "Foundation", p: 100 }, { n: "Framing", p: 100 }, { n: "MEP", p: 78 }, { n: "Interior", p: 20 }, { n: "Landscaping", p: 0 }].map((m, i) => (
+      <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 7 }}>
+        <div style={{ width: 82, fontSize: 11, color: C.darkGray }}>{m.n}</div>
+        <div style={{ flex: 1 }}><Bar pct={m.p} color={m.p === 100 ? C.green : m.p > 0 ? PC : C.lightGray} /></div>
+        <div style={{ fontSize: 10, color: m.p === 100 ? C.green : C.midGray, width: 26, textAlign: "right" }}>{m.p}%</div>
+      </div>
+    ))}
+  </div>
+);
+
+const ScreenUpdates = () => {
+  const [view, setView] = useState("Feed");
+  return (
+    <div>
+      <Seg options={["Feed", "Walkthrough"]} value={view} onChange={setView} />
+      {view === "Feed" && [
+        { time: "Today 2:15 PM", user: "Mike D.", title: "Electrical rough-in complete — 2nd floor ✓", imgs: true, color: PC },
+        { time: "Today 9:30 AM", user: "Sarah K.", title: "HVAC ductwork installation started", imgs: true, color: C.blue },
+        { time: "Yesterday", user: "Inspector", title: "Framing inspection passed ✓", imgs: false, color: C.green },
+        { time: "Mar 28", user: "Mike D.", title: "Plumbing rough-in complete — ground floor", imgs: true, color: PC },
+      ].map((u, i, arr) => (
+        <div key={i} style={{ paddingBottom: 12, marginBottom: 12, borderBottom: i < arr.length - 1 ? `1px solid ${C.lightGray}` : "none" }}>
+          <div style={{ display: "flex", gap: 10 }}>
+            <div style={{ width: 32, height: 32, borderRadius: "50%", background: u.color + "15", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Icon type="camera" size={14} color={u.color} /></div>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{u.user}</span>
+                <span style={{ fontSize: 11, color: C.midGray }}>{u.time}</span>
+              </div>
+              <div style={{ fontSize: 12, color: C.darkGray, marginBottom: u.imgs ? 8 : 0 }}>{u.title}</div>
+              {u.imgs && <div style={{ display: "flex", gap: 4 }}>{[1,2,3].map(n => <div key={n} style={{ flex: 1, height: 56, borderRadius: 8, background: C.lightGray, display: "flex", alignItems: "center", justifyContent: "center" }}><Icon type="camera" size={12} color={C.midGray} /></div>)}</div>}
+            </div>
+          </div>
+        </div>
+      ))}
+      {view === "Walkthrough" && (
+        <div>
+          <div style={{ background: "#0F1A2E", borderRadius: 13, height: 165, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: 10 }}>
+            <Icon type="panorama" size={32} color={C.midGray} />
+            <div style={{ position: "absolute", bottom: 8, left: 10, background: "rgba(255,255,255,0.1)", borderRadius: 6, padding: "3px 10px" }}>
+              <span style={{ fontSize: 10, color: C.white, fontWeight: 700 }}>● 360° • Current phase</span>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 4, marginBottom: 10 }}>
+            {["Foundation", "Framing", "MEP", "Current"].map((p, i) => <div key={p} style={{ flex: 1, padding: "6px 0", textAlign: "center", borderRadius: 7, background: i === 3 ? C.navy : C.offWhite, color: i === 3 ? C.white : C.midGray, fontSize: 10, fontWeight: 600, cursor: "pointer" }}>{p}</div>)}
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 4 }}>
+            {[1,2,3,4,5,6].map(n => <div key={n} style={{ height: 60, background: C.offWhite, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}><Icon type="camera" size={14} color={C.midGray} /></div>)}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ScreenTrack = () => {
+  const [view, setView] = useState("Decisions");
+  const [wTab, setWTab] = useState("Claims");
+  return (
+    <div>
+      <Seg options={["Decisions", "Budget", "Warranty"]} value={view} onChange={setView} />
+      {view === "Decisions" && (
+        <div>
+          <div style={{ background: C.accent + "08", border: `1px solid ${C.accent}22`, borderRadius: 10, padding: "8px 12px", marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
+            <Icon type="warning" size={14} color={C.accent} />
+            <span style={{ fontSize: 12, color: C.accent, fontWeight: 600 }}>2 selections due in 6 days</span>
+          </div>
+          {[
+            { item: "Kitchen faucet & fixtures", deadline: "Apr 5", urgent: true, status: "Action needed" },
+            { item: "Master bath tile", deadline: "Apr 5", urgent: true, status: "Action needed" },
+            { item: "Interior paint colors", deadline: "Apr 12", urgent: false, status: "In review" },
+            { item: "Dining light fixtures", deadline: "Apr 18", urgent: false, status: "Upcoming" },
+            { item: "Garage door style", deadline: "May 1", urgent: false, status: "Upcoming" },
+          ].map((d, i) => (
+            <div key={i} style={{ background: d.urgent ? C.accent + "05" : C.offWhite, border: `1px solid ${d.urgent ? C.accent + "20" : C.lightGray}`, borderRadius: 11, padding: "11px 13px", marginBottom: 7, cursor: "pointer" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{d.item}</span>
+                <Badge color={d.urgent ? C.accent : d.status === "In review" ? C.blue : C.midGray}>{d.status}</Badge>
+              </div>
+              <span style={{ fontSize: 11, color: d.urgent ? C.accent : C.midGray }}>Due {d.deadline}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {view === "Budget" && (
+        <div>
+          <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+            <Tile label="Allowance" value="$485K" color={C.navy} icon="finance" />
+            <Tile label="Spent" value="$312K" color={C.accent} icon="chart" />
+            <Tile label="Left" value="$173K" color={C.green} icon="check" />
+          </div>
+          <div style={{ background: C.green + "08", borderRadius: 9, padding: "7px 11px", marginBottom: 12, display: "flex", gap: 6, alignItems: "center" }}>
+            <Icon type="check" size={13} color={C.green} /><span style={{ fontSize: 12, color: C.green }}>$7K under budget</span>
+          </div>
+          {[{ c: "Structure", b: 120, a: 120, col: C.green }, { c: "Framing", b: 85, a: 85, col: C.green }, { c: "MEP", b: 90, a: 70, col: PC }, { c: "Interior", b: 100, a: 22, col: C.blue }, { c: "Kitchen & bath", b: 55, a: 10, col: C.purple }, { c: "Landscaping", b: 35, a: 5, col: C.midGray }].map((r, i) => (
+            <div key={i} style={{ marginBottom: 9 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 3 }}>
+                <span style={{ color: C.darkGray }}>{r.c}</span>
+                <span style={{ color: C.text, fontWeight: 500 }}>${r.a}K / <span style={{ color: C.midGray }}>${r.b}K</span></span>
+              </div>
+              <Bar pct={Math.round((r.a / r.b) * 100)} color={r.col} />
+            </div>
+          ))}
+        </div>
+      )}
+      {view === "Warranty" && (
+        <div>
+          <div style={{ display: "flex", background: C.offWhite, borderRadius: 10, padding: 3, marginBottom: 12 }}>
+            {["Claims", "Coverage"].map(t => <div key={t} onClick={() => setWTab(t)} style={{ flex: 1, textAlign: "center", padding: "7px 0", borderRadius: 8, background: wTab === t ? C.white : "transparent", fontSize: 12, fontWeight: wTab === t ? 700 : 400, color: wTab === t ? C.navy : C.midGray, cursor: "pointer", boxShadow: wTab === t ? "0 1px 4px rgba(0,0,0,0.09)" : "none" }}>{t}</div>)}
+          </div>
+          {wTab === "Claims" && [
+            { id: "WR-401", issue: "Kitchen faucet leak", status: "Tech assigned", date: "Mar 24", color: C.accent },
+            { id: "WR-398", issue: "Garage door sensor", status: "Visit Apr 2", date: "Mar 20", color: C.blue },
+          ].map((w, i) => (
+            <div key={i} style={{ background: C.offWhite, borderRadius: 11, padding: "11px 13px", marginBottom: 8, borderLeft: `3px solid ${w.color}` }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{w.issue}</span>
+                <Badge color={w.color}>{w.status}</Badge>
+              </div>
+              <span style={{ fontSize: 11, color: C.midGray }}>{w.id} • Filed {w.date}</span>
+            </div>
+          ))}
+          {wTab === "Coverage" && [
+            { n: "Structural", e: "2036", p: 95, c: PC },
+            { n: "Mechanical", e: "2028", p: 80, c: C.blue },
+            { n: "Appliances", e: "2027", p: 60, c: C.accent },
+            { n: "Fixtures", e: "2027", p: 70, c: C.navy },
+          ].map((c, i) => (
+            <div key={i} style={{ background: C.offWhite, borderRadius: 11, padding: "11px 13px", marginBottom: 8 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{c.n}</span>
+                <span style={{ fontSize: 11, color: C.midGray }}>Until {c.e}</span>
+              </div>
+              <Bar pct={c.p} color={c.c} />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DRAWER MENU (hamburger)
+// ══════════════════════════════════════════════════════════════════════════════
+const DrawerMenu = ({ openDrawer }) => (
+  <div>
+    <DrawerRow icon="msg"      label="Messages"       sub="3 unread from project team"          color={PC}      badge={{ text: "3", color: PC }}           onPress={() => openDrawer("messages")} />
+    <DrawerRow icon="doc"      label="Documents"      sub="25 files • 1 awaiting signature"     color={C.blue}  badge={{ text: "Sign", color: C.accent }}  onPress={() => openDrawer("docs")} />
+    <DrawerRow icon="change"   label="Change orders"  sub="1 awaiting your approval"            color={C.accent} badge={{ text: "Approve", color: C.accent }} onPress={() => openDrawer("changes")} />
+    <DrawerRow icon="lock"     label="Door access"    sub="Front door, gate, garage"            color={C.navy}                                             onPress={() => openDrawer("access")} />
+    <DrawerRow icon="annotate" label="Photo markup"   sub="Annotate site photos"                color={C.blue}                                             onPress={() => openDrawer("annotate")} />
+    <DrawerRow icon="gift"     label="Refer & earn"   sub="$500 per referral"                   color={C.amber}                                            onPress={() => openDrawer("referral")} />
+    <DrawerRow icon="search"   label="Smart search"   sub="Across updates, docs, claims"        color={C.midGray}                                          onPress={() => openDrawer("search")} />
+    <DrawerRow icon="bell"     label="Notifications"  sub="Manage preferences"                  color={C.midGray}                                          onPress={() => openDrawer("notifs")} last />
+  </div>
+);
+
+// ══════════════════════════════════════════════════════════════════════════════
+// NAV + APP
+// ══════════════════════════════════════════════════════════════════════════════
+const TABS = [
+  { key: "home",    icon: "home",   label: "Home",    Screen: ScreenHome },
+  { key: "updates", icon: "camera", label: "Updates", Screen: ScreenUpdates },
+  { key: "track",   icon: "punch",  label: "Track",   Screen: ScreenTrack },
+];
+
+const DRAWER_MAP = (openDrawer) => ({
+  messages:  { title: "Messages",        subtitle: "Riverside Residence PM",     content: <DrawerMessages /> },
+  docs:      { title: "Documents",       subtitle: "25 files",                   content: <DrawerDocs /> },
+  changes:   { title: "Change orders",   subtitle: null,                         content: <DrawerChangeOrders /> },
+  access:    { title: "Door access",     subtitle: "Tap to unlock • Geofenced",  content: <DrawerDoorAccess /> },
+  annotate:  { title: "Photo markup",    subtitle: "Annotate site photos",       content: <DrawerPhotoAnnotate /> },
+  referral:  { title: "Refer & earn",    subtitle: "Earn $500 per referral",     content: <DrawerReferral /> },
+  search:    { title: "Search",          subtitle: null,                         content: <DrawerSearch /> },
+  notifs:    { title: "Notifications",   subtitle: "Manage preferences",         content: <DrawerNotifPrefs /> },
+  ai:        { title: "AI assistant",    subtitle: "Knows your build",           content: <DrawerAI /> },
+  menu:      { title: "More features",   subtitle: null,                         content: <DrawerMenu openDrawer={openDrawer} /> },
+});
+
+function HomeownerApp() {
+  const [tabIdx, setTabIdx] = useState(0);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerKey, setDrawerKey] = useState(null);
+
+  const openDrawer = (key) => { setDrawerKey(key); setDrawerOpen(true); };
+  const closeDrawer = () => setDrawerOpen(false);
+
+  const { Screen } = TABS[tabIdx];
+  const map = DRAWER_MAP(openDrawer);
+  const active = drawerKey && map[drawerKey];
+  const aiOpen = drawerKey === "ai" && drawerOpen;
+
+  return (
+    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif", maxWidth: 400, margin: "0 auto" }}>
+      <div style={{ background: C.white, borderRadius: 32, border: `1px solid ${C.lightGray}`, overflow: "hidden", boxShadow: "0 8px 40px rgba(0,0,0,0.1)", position: "relative" }}>
+
+        {/* Status bar */}
+        <div style={{ background: C.navy, padding: "10px 18px 14px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+            <span style={{ fontWeight: 700, color: C.white, fontSize: 12 }}>9:41</span>
+            <span style={{ letterSpacing: 1.5, fontSize: 9, fontWeight: 700, color: "#8BA4C8" }}>BUILDSYNC — HOMEOWNER</span>
+            <span style={{ color: C.white, fontSize: 10 }}>●●●</span>
+          </div>
+          <div style={{ fontSize: 11, color: "#8BA4C8", textAlign: "center" }}>John Carter • Riverside Residence</div>
+        </div>
+
+        {/* Content */}
+        <div style={{ padding: "14px 16px 12px", minHeight: 468, maxHeight: 468, overflowY: "auto" }}>
+          <Screen openDrawer={openDrawer} />
+        </div>
+
+        {/* FAB — AI Assistant */}
+        <div style={{ position: "relative" }}>
+          <div onClick={() => aiOpen ? closeDrawer() : openDrawer("ai")} style={{ position: "absolute", bottom: 14, right: 16, zIndex: 9, width: 50, height: 50, borderRadius: "50%", background: `linear-gradient(135deg, ${C.purple} 0%, #9B51E0 100%)`, boxShadow: aiOpen ? `0 0 0 4px ${C.purple}30, 0 4px 20px ${C.purple}60` : `0 4px 18px ${C.purple}50`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "box-shadow 0.2s, transform 0.2s", transform: aiOpen ? "scale(0.93)" : "scale(1)" }}>
+            {!aiOpen && <div style={{ position: "absolute", inset: -5, borderRadius: "50%", border: `2px solid ${C.purple}40`, animation: "fabPulse 2.2s ease-out infinite" }} />}
+            <Icon type="aibot" size={22} color={C.white} />
+          </div>
+          {!aiOpen && (
+            <div style={{ position: "absolute", bottom: 22, right: 72, background: C.navy, color: C.white, fontSize: 11, fontWeight: 600, padding: "5px 10px", borderRadius: 20, whiteSpace: "nowrap", pointerEvents: "none", opacity: 0.88, boxShadow: "0 2px 10px rgba(0,0,0,0.15)" }}>
+              Ask AI
+              <div style={{ position: "absolute", right: -5, top: "50%", transform: "translateY(-50%)", width: 0, height: 0, borderTop: "5px solid transparent", borderBottom: "5px solid transparent", borderLeft: `5px solid ${C.navy}` }} />
+            </div>
+          )}
+        </div>
+        <style>{`@keyframes fabPulse { 0% { transform: scale(1); opacity: 0.7; } 70% { transform: scale(1.55); opacity: 0; } 100% { transform: scale(1.55); opacity: 0; } }`}</style>
+
+        {/* Bottom nav */}
+        <div style={{ display: "flex", alignItems: "center", borderTop: `1px solid ${C.lightGray}`, background: C.white, padding: "6px 0 14px" }}>
+          {TABS.map((tab, i) => (
+            <div key={tab.key} onClick={() => setTabIdx(i)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, cursor: "pointer", padding: "4px 0" }}>
+              <div style={{ width: 40, height: 28, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 9, background: tabIdx === i && !drawerOpen ? PC + "12" : "transparent" }}>
+                <Icon type={tab.icon} size={19} color={tabIdx === i && !drawerOpen ? PC : C.midGray} />
+              </div>
+              <div style={{ fontSize: 9, color: tabIdx === i && !drawerOpen ? PC : C.midGray, fontWeight: tabIdx === i && !drawerOpen ? 700 : 400 }}>{tab.label}</div>
+            </div>
+          ))}
+          <div onClick={() => openDrawer("menu")} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, cursor: "pointer", padding: "4px 0" }}>
+            <div style={{ width: 40, height: 28, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 9, background: drawerOpen && drawerKey === "menu" ? PC + "12" : "transparent", position: "relative" }}>
+              <Icon type="menu" size={19} color={drawerOpen && drawerKey === "menu" ? PC : C.midGray} />
+              <div style={{ position: "absolute", top: 3, right: 6, width: 7, height: 7, borderRadius: "50%", background: C.red, border: `1.5px solid ${C.white}` }} />
+            </div>
+            <div style={{ fontSize: 9, color: drawerOpen && drawerKey === "menu" ? PC : C.midGray, fontWeight: drawerOpen && drawerKey === "menu" ? 700 : 400 }}>More</div>
+          </div>
+        </div>
+
+        {/* Drawer */}
+        {active && (
+          <Drawer open={drawerOpen} onClose={closeDrawer} title={active.title} subtitle={active.subtitle}>
+            {active.content}
+          </Drawer>
+        )}
+      </div>
+    </div>
+  );
+}
+
+</script>
+
+<!-- ── Company source (compiled by Babel on demand) ── -->
+<script type="text/plain" id="company-src">
+// BuildSync Pro — Company App
+// Portal color: Amber/Orange (#E8913A)
+const { useState } = React;
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DESIGN TOKENS
+// ══════════════════════════════════════════════════════════════════════════════
+const C = {
+  navy: "#1A2744", darkNavy: "#0F1A2E", accent: "#E8913A", teal: "#0D9488",
+  blue: "#3B82F6", green: "#10B981", red: "#EF4444", amber: "#F59E0B",
+  purple: "#7C3AED", white: "#FFFFFF", offWhite: "#F8F9FC", lightGray: "#E2E8F0",
+  midGray: "#94A3B8", darkGray: "#475569", text: "#1E293B",
+};
+const PC = C.accent; // portal accent
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ICON SYSTEM
+// ══════════════════════════════════════════════════════════════════════════════
+const paths = {
+  dashboard: "M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z",
+  users:     "M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z",
+  finance:   "M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z",
+  menu:      "M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z",
+  close:     "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z",
+  chevron:   "M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z",
+  send:      "M2.01 21L23 12 2.01 3 2 10l15 2-15 2z",
+  search:    "M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z",
+  check:     "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z",
+  warning:   "M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z",
+  chart:     "M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z",
+  building:  "M15 11V5l-3-3-3 3v2H3v14h18V11h-6zm-8 8H5v-2h2v2zm0-4H5v-2h2v2zm0-4H5V9h2v2zm6 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V9h2v2zm0-4h-2V5h2v2zm6 12h-2v-2h2v2zm0-4h-2v-2h2v2z",
+  doc:       "M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z",
+  msg:       "M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z",
+  person:    "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z",
+  drone:     "M22 10l-6-6H8L2 10l2 2 2-2v8h2v-2h8v2h2v-8l2 2 2-2zM8 14v-2h8v2H8z",
+  cube:      "M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.36.2-.8.2-1.14 0l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.36-.2.8-.2 1.14 0l7.9 4.44c.32.17.53.5.53.88v9z",
+  iot:       "M7.76 16.24C6.67 15.16 6 13.66 6 12s.67-3.16 1.76-4.24l1.42 1.42C8.45 9.9 8 10.9 8 12c0 1.1.45 2.1 1.17 2.83l-1.41 1.41zm8.48 0l-1.42-1.42C15.55 14.1 16 13.1 16 12c0-1.1-.45-2.1-1.17-2.83l1.42-1.42C17.34 8.84 18 10.34 18 12s-.67 3.16-1.76 4.24zM12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM20 12c0 2.21-.9 4.21-2.35 5.65l1.42 1.42C20.88 17.26 22 14.76 22 12s-1.12-5.26-2.93-7.07l-1.42 1.42A7.94 7.94 0 0 1 20 12zM6.35 6.35L4.93 4.93C3.12 6.74 2 9.24 2 12s1.12 5.26 2.93 7.07l1.42-1.42C4.9 16.21 4 14.21 4 12s.9-4.21 2.35-5.65z",
+  shield:    "M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z",
+  safety:    "M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 14l-3-3 1.41-1.41L11 12.17l4.59-4.58L17 9l-6 6z",
+  settings:  "M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z",
+  wrench:    "M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z",
+  time:      "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z",
+  order:     "M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z",
+  camera:    "M12 15.2A3.2 3.2 0 1 0 12 8.8a3.2 3.2 0 0 0 0 6.4zM9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9z",
+  annotate:  "M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83zM3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z",
+  change:    "M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z",
+  face:      "M9 11.75c-.69 0-1.25.56-1.25 1.25s.56 1.25 1.25 1.25 1.25-.56 1.25-1.25-.56-1.25-1.25-1.25zm6 0c-.69 0-1.25.56-1.25 1.25s.56 1.25 1.25 1.25 1.25-.56 1.25-1.25-.56-1.25-1.25-1.25zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-.29.02-.58.05-.86 2.36-1.05 4.23-2.98 5.21-5.37C11.07 8.33 14.05 10 17.42 10c.78 0 1.53-.09 2.25-.26.21.71.33 1.47.33 2.26 0 4.41-3.59 8-8 8z",
+  aibot:     "M21 10.5h-.5V8c0-1.1-.9-2-2-2h-5V4.5c.58-.35 1-.98 1-1.5 0-1.1-.9-2-2-2s-2 .9-2 2c0 .52.42 1.15 1 1.5V6H6c-1.1 0-2 .9-2 2v2.5H3.5c-.28 0-.5.22-.5.5v3c0 .28.22.5.5.5H4V17c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-2.5h.5c.28 0 .5-.22.5-.5v-3c0-.28-.22-.5-.5-.5zM9 14.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm6 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z",
+  clock:     "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z",
+};
+const Icon = ({ type, size = 18, color = C.midGray }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill={color} style={{ flexShrink: 0 }}>
+    <path d={paths[type] || paths.dashboard} />
+  </svg>
+);
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PRIMITIVES
+// ══════════════════════════════════════════════════════════════════════════════
+const Badge = ({ children, color = PC }) => (
+  <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 20, background: color + "18", color, whiteSpace: "nowrap" }}>{children}</span>
+);
+const Bar = ({ pct, color = PC, h = 5 }) => (
+  <div style={{ background: C.lightGray, borderRadius: h, height: h, width: "100%", overflow: "hidden" }}>
+    <div style={{ background: color, borderRadius: h, height: h, width: `${Math.min(100, pct)}%` }} />
+  </div>
+);
+const Tile = ({ label, value, color = C.navy, icon }) => (
+  <div style={{ flex: 1, background: C.offWhite, borderRadius: 12, padding: "10px 10px 8px" }}>
+    {icon && <Icon type={icon} size={12} color={color} />}
+    <div style={{ fontSize: 20, fontWeight: 700, color, marginTop: icon ? 4 : 0, lineHeight: 1.1 }}>{value}</div>
+    <div style={{ fontSize: 10, color: C.midGray, marginTop: 2, fontWeight: 500 }}>{label}</div>
+  </div>
+);
+const SectionLabel = ({ children, action, onAction }) => (
+  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+    <span style={{ fontSize: 11, fontWeight: 700, color: C.midGray, textTransform: "uppercase", letterSpacing: 0.6 }}>{children}</span>
+    {action && <span onClick={onAction} style={{ fontSize: 11, color: PC, fontWeight: 600, cursor: "pointer" }}>{action} →</span>}
+  </div>
+);
+const Seg = ({ options, value, onChange }) => (
+  <div style={{ display: "flex", background: C.offWhite, borderRadius: 10, padding: 3, marginBottom: 14 }}>
+    {options.map(o => (
+      <div key={o} onClick={() => onChange(o)} style={{ flex: 1, textAlign: "center", padding: "7px 0", borderRadius: 8, cursor: "pointer", fontSize: 11, fontWeight: value === o ? 700 : 400, color: value === o ? C.text : C.midGray, background: value === o ? C.white : "transparent", boxShadow: value === o ? "0 1px 4px rgba(0,0,0,0.09)" : "none", transition: "all 0.15s" }}>{o}</div>
+    ))}
+  </div>
+);
+const DrawerRow = ({ icon, label, sub, color, badge, last, onPress }) => (
+  <div onClick={onPress} style={{ display: "flex", alignItems: "center", gap: 13, padding: "12px 20px", borderBottom: last ? "none" : `1px solid ${C.lightGray}`, cursor: "pointer", background: C.white }}>
+    <div style={{ width: 38, height: 38, borderRadius: 11, background: color + "12", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Icon type={icon} size={18} color={color} /></div>
+    <div style={{ flex: 1 }}>
+      <div style={{ fontSize: 14, fontWeight: 500, color: C.text }}>{label}</div>
+      {sub && <div style={{ fontSize: 11, color: C.midGray, marginTop: 1 }}>{sub}</div>}
+    </div>
+    {badge && <Badge color={badge.color || color}>{badge.text}</Badge>}
+    <Icon type="chevron" size={16} color={C.lightGray} />
+  </div>
+);
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DRAWER SHELL
+// ══════════════════════════════════════════════════════════════════════════════
+const Drawer = ({ open, onClose, title, subtitle, children }) => (
+  <>
+    <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(10,20,40,0.45)", zIndex: 10, opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity 0.25s" }} />
+    <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: C.white, borderRadius: "20px 20px 0 0", zIndex: 11, maxHeight: "88%", display: "flex", flexDirection: "column", transform: open ? "translateY(0)" : "translateY(100%)", transition: "transform 0.28s cubic-bezier(0.32,0.72,0,1)" }}>
+      <div style={{ display: "flex", justifyContent: "center", padding: "10px 0 0" }}>
+        <div style={{ width: 36, height: 4, borderRadius: 2, background: C.lightGray }} />
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "14px 20px 10px" }}>
+        <div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: C.navy }}>{title}</div>
+          {subtitle && <div style={{ fontSize: 12, color: C.midGray, marginTop: 2 }}>{subtitle}</div>}
+        </div>
+        <div onClick={onClose} style={{ width: 32, height: 32, borderRadius: "50%", background: C.offWhite, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}><Icon type="close" size={16} color={C.midGray} /></div>
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", paddingBottom: 24 }}>{children}</div>
+    </div>
+  </>
+);
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DRAWER SCREENS — COMPANY SPECIFIC
+// ══════════════════════════════════════════════════════════════════════════════
+const DrawerClientMessages = () => {
+  const [msg, setMsg] = useState("");
+  const [messages, setMessages] = useState([
+    { from: "John Carter", text: "Any update on the fixture selections deadline?", time: "2:20 PM", mine: false },
+    { from: "You", text: "Kitchen & bath choices needed by Apr 5 to stay on schedule.", time: "2:22 PM", mine: true },
+    { from: "John Carter", text: "Got it — I'll review the options tonight.", time: "2:30 PM", mine: false },
+  ]);
+  const send = () => { if (!msg.trim()) return; setMessages(m => [...m, { from: "You", text: msg, time: "Now", mine: true }]); setMsg(""); };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: 380, padding: "0 20px" }}>
+      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, paddingBottom: 8 }}>
+        {messages.map((m, i) => (
+          <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: m.mine ? "flex-end" : "flex-start" }}>
+            {!m.mine && <span style={{ fontSize: 10, color: C.midGray, marginBottom: 2 }}>{m.from}</span>}
+            <div style={{ maxWidth: "80%", background: m.mine ? PC : C.offWhite, color: m.mine ? C.white : C.text, borderRadius: m.mine ? "14px 14px 3px 14px" : "14px 14px 14px 3px", padding: "9px 13px", fontSize: 13, lineHeight: 1.4 }}>{m.text}</div>
+            <span style={{ fontSize: 9, color: C.midGray, marginTop: 2 }}>{m.time}{m.mine ? " ✓✓" : ""}</span>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: 8, background: C.offWhite, borderRadius: 24, padding: "7px 7px 7px 14px", border: `1px solid ${C.lightGray}` }}>
+        <input value={msg} onChange={e => setMsg(e.target.value)} onKeyDown={e => e.key === "Enter" && send()} placeholder="Reply to client…" style={{ flex: 1, border: "none", background: "transparent", fontSize: 13, outline: "none", color: C.text }} />
+        <div onClick={send} style={{ width: 34, height: 34, borderRadius: "50%", background: PC, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}><Icon type="send" size={15} color={C.white} /></div>
+      </div>
+    </div>
+  );
+};
+
+const DrawerDocs = () => {
+  const docs = [
+    { name: "Construction contract — Riverside", type: "PDF", status: "Signed", date: "Jan 15", color: C.green },
+    { name: "Change order #3 — HVAC upgrade", type: "PDF", status: "Pending client", date: "Mar 28", color: PC },
+    { name: "Bayshore site plan v2", type: "DWG", status: "Current", date: "Mar 12", color: C.blue },
+    { name: "Electrical permit — Riverside", type: "PDF", status: "Approved", date: "Feb 1", color: C.green },
+    { name: "Clearwater permit application", type: "PDF", status: "Submitted", date: "Mar 20", color: C.amber },
+  ];
+  return (
+    <div style={{ padding: "0 20px" }}>
+      <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+        {["All", "Contracts", "Permits", "Changes"].map((t, i) => (
+          <div key={t} style={{ fontSize: 11, padding: "5px 10px", borderRadius: 20, background: i === 0 ? C.navy : C.offWhite, color: i === 0 ? C.white : C.midGray, fontWeight: 600, cursor: "pointer" }}>{t}</div>
+        ))}
+      </div>
+      {docs.map((d, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: i < docs.length - 1 ? `1px solid ${C.lightGray}` : "none" }}>
+          <div style={{ width: 36, height: 36, borderRadius: 9, background: d.color + "12", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Icon type="doc" size={16} color={d.color} /></div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 500, color: C.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.name}</div>
+            <div style={{ fontSize: 11, color: C.midGray }}>{d.type} • {d.date}</div>
+          </div>
+          <Badge color={d.color}>{d.status}</Badge>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const DrawerDroneIoT = () => (
+  <div style={{ padding: "0 20px" }}>
+    <div style={{ background: C.darkNavy, borderRadius: 12, height: 150, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12, position: "relative" }}>
+      <Icon type="drone" size={32} color={C.midGray} />
+      <div style={{ position: "absolute", bottom: 8, left: 10, background: "rgba(255,255,255,0.12)", borderRadius: 6, padding: "3px 10px" }}>
+        <span style={{ fontSize: 10, color: C.white, fontWeight: 700 }}>● LIVE • Riverside Residence</span>
+      </div>
+    </div>
+    <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+      <Tile label="Flyovers" value="12" color={C.navy} icon="drone" />
+      <Tile label="Coverage" value="96%" color={C.teal} icon="chart" />
+      <Tile label="Alerts" value="0" color={C.green} icon="check" />
+    </div>
+    <SectionLabel>IoT sensors — Riverside</SectionLabel>
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+      {[{ l: "Temperature", v: "72°F", c: C.teal, ok: true }, { l: "Humidity", v: "45%", c: C.blue, ok: true }, { l: "Concrete cure", v: "68°F", c: C.green, ok: true }, { l: "Structural load", v: "1.2 kPa", c: PC, ok: false }].map((s, i) => (
+        <div key={i} style={{ background: C.offWhite, borderRadius: 10, padding: "10px 10px 8px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+            <Icon type="iot" size={12} color={s.c} />
+            <Badge color={s.ok ? C.green : PC}>{s.ok ? "OK" : "Watch"}</Badge>
+          </div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: C.navy }}>{s.v}</div>
+          <div style={{ fontSize: 10, color: C.midGray }}>{s.l}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const DrawerBIM = () => (
+  <div style={{ padding: "0 20px" }}>
+    <div style={{ background: C.darkNavy, borderRadius: 12, height: 180, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginBottom: 12 }}>
+      <Icon type="cube" size={44} color={C.teal} />
+      <div style={{ position: "absolute", bottom: 8, left: 10, display: "flex", gap: 4 }}>
+        {["Structure", "MEP", "Finishes", "All"].map((l, i) => (
+          <div key={l} style={{ fontSize: 10, color: i === 3 ? C.darkNavy : C.white, background: i === 3 ? C.teal : "rgba(255,255,255,0.12)", padding: "4px 8px", borderRadius: 6, fontWeight: 600 }}>{l}</div>
+        ))}
+      </div>
+    </div>
+    <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
+      <Tile label="Elements" value="12,847" color={C.navy} icon="cube" />
+      <Tile label="Clashes" value="3" color={C.red} icon="warning" />
+      <Tile label="Resolved" value="14" color={C.green} icon="check" />
+    </div>
+    {[{ zone: "Zone A — Electrical vs duct", sev: "High", color: C.red }, { zone: "Zone B — Pipe clash at beam", sev: "Medium", color: PC }, { zone: "Zone C — HVAC clearance", sev: "Low", color: C.blue }].map((c, i) => (
+      <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 0", borderTop: `1px solid ${C.lightGray}` }}>
+        <span style={{ fontSize: 12, color: C.text }}>{c.zone}</span>
+        <Badge color={c.color}>{c.sev}</Badge>
+      </div>
+    ))}
+  </div>
+);
+
+const DrawerWarrantyQueue = () => (
+  <div style={{ padding: "0 20px" }}>
+    {[
+      { id: "WR-403", issue: "AC not cooling", proj: "Riverside", age: "45m", priority: "High", color: C.red },
+      { id: "WR-401", issue: "Kitchen faucet leak", proj: "Riverside", age: "6d", priority: "Medium", color: PC },
+      { id: "WR-402", issue: "Cracked tile — bathroom", proj: "Lakewood", age: "2h", priority: "Low", color: C.blue },
+    ].map((w, i) => (
+      <div key={i} style={{ background: C.offWhite, borderRadius: 12, padding: "11px 13px", marginBottom: 8, borderLeft: `3px solid ${w.color}` }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{w.issue}</span>
+          <Badge color={w.color}>{w.priority}</Badge>
+        </div>
+        <div style={{ fontSize: 11, color: C.midGray, marginBottom: 8 }}>{w.id} • {w.proj} • {w.age} ago</div>
+        <div style={{ display: "flex", gap: 6 }}>
+          {["Assign tech", "Schedule", "Request info"].map(a => (
+            <div key={a} style={{ fontSize: 10, padding: "5px 9px", borderRadius: 6, background: C.teal + "10", color: C.teal, fontWeight: 600, cursor: "pointer" }}>{a}</div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
+const DrawerSafetyLog = () => (
+  <div style={{ padding: "0 20px" }}>
+    <div style={{ background: C.green + "08", border: `1px solid ${C.green}20`, borderRadius: 12, padding: "10px 14px", marginBottom: 14, display: "flex", alignItems: "center", gap: 10 }}>
+      <Icon type="safety" size={18} color={C.green} />
+      <span style={{ fontSize: 13, fontWeight: 600, color: C.green }}>47 days incident-free</span>
+    </div>
+    <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+      <Tile label="Days safe" value="47" color={C.green} icon="safety" />
+      <Tile label="Near misses" value="1" color={C.amber} icon="warning" />
+      <Tile label="Inspections" value="12" color={C.teal} icon="check" />
+    </div>
+    {[{ type: "Near miss", desc: "Unsecured ladder — Zone A", date: "Mar 22", sev: "Low", color: C.amber }, { type: "First aid", desc: "Minor cut, handled on site", date: "Mar 10", sev: "Minor", color: C.blue }].map((e, i) => (
+      <div key={i} style={{ background: C.offWhite, borderRadius: 12, padding: "10px 13px", marginBottom: 8, borderLeft: `3px solid ${e.color}` }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{e.type}</span>
+          <Badge color={e.color}>{e.sev}</Badge>
+        </div>
+        <div style={{ fontSize: 12, color: C.darkGray }}>{e.desc}</div>
+        <div style={{ fontSize: 11, color: C.midGray, marginTop: 2 }}>{e.date}</div>
+      </div>
+    ))}
+    <div style={{ padding: "11px 0", textAlign: "center", borderRadius: 12, border: `1.5px dashed ${C.lightGray}`, color: C.teal, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>+ Log new incident</div>
+  </div>
+);
+
+const DrawerChangeOrders = () => {
+  const orders = [
+    { id: "CO-003", title: "HVAC system upgrade", amount: "+$8,400", status: "Client approval pending", color: PC },
+    { id: "CO-002", title: "Kitchen island extension", amount: "+$3,200", status: "Approved", color: C.green },
+    { id: "CO-001", title: "Remove interior wall", amount: "+$1,800", status: "Approved", color: C.green },
+  ];
+  return (
+    <div style={{ padding: "0 20px" }}>
+      {orders.map((o, i) => (
+        <div key={i} style={{ background: C.offWhite, borderRadius: 12, padding: "11px 13px", marginBottom: 8, borderLeft: `3px solid ${o.color}` }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{o.title}</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: o.color }}>{o.amount}</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: 11, color: C.midGray }}>{o.id}</span>
+            <Badge color={o.color}>{o.status}</Badge>
+          </div>
+        </div>
+      ))}
+      <div style={{ padding: "11px 0", textAlign: "center", borderRadius: 12, border: `1.5px dashed ${C.lightGray}`, color: PC, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>+ Create change order</div>
+    </div>
+  );
+};
+
+const DrawerPhotoMarkup = () => {
+  const [color, setColor] = useState(C.red);
+  return (
+    <div style={{ padding: "0 20px" }}>
+      <div style={{ background: C.darkNavy, borderRadius: 12, height: 170, position: "relative", marginBottom: 12, overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}><Icon type="camera" size={28} color={C.midGray} /></div>
+        <div style={{ position: "absolute", top: 22, left: 32, width: 80, height: 52, border: `2px solid ${C.red}`, borderRadius: 4 }} />
+        <div style={{ position: "absolute", top: 19, left: 30, background: C.red, color: C.white, fontSize: 9, fontWeight: 700, padding: "2px 5px", borderRadius: 3 }}>Issue #1</div>
+        <div style={{ position: "absolute", bottom: 55, right: 44, width: 60, height: 38, border: `2px solid ${PC}`, borderRadius: 4 }} />
+        <div style={{ position: "absolute", bottom: 92, right: 42, background: PC, color: C.white, fontSize: 9, fontWeight: 700, padding: "2px 5px", borderRadius: 3 }}>Issue #2</div>
+      </div>
+      <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
+        {[C.red, PC, C.blue, C.green].map(c => (
+          <div key={c} onClick={() => setColor(c)} style={{ width: 22, height: 22, borderRadius: "50%", background: c, border: color === c ? `2.5px solid ${C.navy}` : "2.5px solid transparent", cursor: "pointer" }} />
+        ))}
+        <div style={{ flex: 1 }} />
+        {["Rect", "Arrow", "Text"].map(t => <div key={t} style={{ fontSize: 11, padding: "5px 10px", borderRadius: 8, background: C.offWhite, color: C.darkGray, cursor: "pointer" }}>{t}</div>)}
+      </div>
+      {[{ id: 1, note: "Exposed wire — needs conduit before drywall", color: C.red }, { id: 2, note: "HVAC duct misaligned, confirm with drawings", color: PC }].map((a, i) => (
+        <div key={i} style={{ display: "flex", gap: 8, padding: "9px 0", borderTop: `1px solid ${C.lightGray}` }}>
+          <div style={{ width: 12, height: 12, borderRadius: 3, background: a.color, flexShrink: 0, marginTop: 2 }} />
+          <div style={{ fontSize: 12, color: C.text }}>#{a.id} — {a.note}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const DrawerSearch = () => {
+  const [q, setQ] = useState("");
+  const results = [
+    { type: "Project", title: "Clearwater Condos — permit delayed", sub: "Updated 2h ago", icon: "building", color: C.red },
+    { type: "Worker", title: "Mike Dawson — Electrician on site", sub: "Clocked in 7:05 AM", icon: "person", color: PC },
+    { type: "Warranty", title: "AC not cooling — WR-403 HIGH", sub: "Riverside • 45m ago", icon: "wrench", color: C.red },
+    { type: "Material", title: "Drywall order — PO sent to USG", sub: "ETA Apr 6 • $4,480", icon: "order", color: C.teal },
+  ];
+  return (
+    <div style={{ padding: "0 20px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, background: C.offWhite, borderRadius: 12, padding: "10px 14px", marginBottom: 16, border: `1px solid ${C.lightGray}` }}>
+        <Icon type="search" size={16} color={C.midGray} />
+        <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search projects, crew, materials…" style={{ flex: 1, border: "none", background: "transparent", fontSize: 13, outline: "none", color: C.text }} />
+      </div>
+      {results.map((r, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: i < results.length - 1 ? `1px solid ${C.lightGray}` : "none", cursor: "pointer" }}>
+          <div style={{ width: 34, height: 34, borderRadius: 9, background: r.color + "12", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Icon type={r.icon} size={15} color={r.color} /></div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 13, fontWeight: 500, color: C.text }}>{r.title}</div>
+            <div style={{ fontSize: 11, color: C.midGray }}>{r.sub}</div>
+          </div>
+          <Badge color={r.color}>{r.type}</Badge>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+// AI ASSISTANT — COMPANY
+// ══════════════════════════════════════════════════════════════════════════════
+const DrawerAI = () => {
+  const [input, setInput] = useState("");
+  const [chat, setChat] = useState([
+    { role: "ai", text: "Hey! I have live visibility across all 5 of your active projects. Ask me about crew, budgets, subcontractors, safety, deadlines — anything operational." },
+    { role: "user", text: "Which project is most at risk right now?" },
+    { role: "ai", text: "Clearwater Condos. It's only 15% complete but the permit delay puts it 11 days behind. Moving 2 crew from Lakewood Reno (which is ahead at 89%) could recover 6–8 days. Also: Premier Plumbing's COI expired — resolve that before they return to site." },
+  ]);
+  const ask = (q) => {
+    const question = q || input;
+    if (!question.trim()) return;
+    setChat(c => [...c, { role: "user", text: question }, { role: "ai", text: "Analysing your project data…" }]);
+    setInput("");
+  };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: 380, padding: "0 20px" }}>
+      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, paddingBottom: 8 }}>
+        {chat.map((m, i) => (
+          <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: m.role === "user" ? "flex-end" : "flex-start" }}>
+            <div style={{ maxWidth: "85%", background: m.role === "user" ? C.purple : C.offWhite, color: m.role === "user" ? C.white : C.text, borderRadius: m.role === "user" ? "14px 14px 3px 14px" : "14px 14px 14px 3px", padding: "9px 13px", fontSize: 13, lineHeight: 1.55 }}>{m.text}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 8 }}>
+        {["Who's on site now?", "Budget across sites?", "Any overdue tasks?"].map(q => (
+          <div key={q} onClick={() => ask(q)} style={{ fontSize: 11, padding: "5px 10px", borderRadius: 20, border: `1px solid ${C.purple}30`, color: C.purple, cursor: "pointer", background: C.purple + "08" }}>{q}</div>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: 8, background: C.offWhite, borderRadius: 24, padding: "7px 7px 7px 14px", border: `1px solid ${C.lightGray}` }}>
+        <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && ask()} placeholder="Ask about projects, crew, budget…" style={{ flex: 1, border: "none", background: "transparent", fontSize: 13, outline: "none", color: C.text }} />
+        <div onClick={() => ask()} style={{ width: 34, height: 34, borderRadius: "50%", background: C.purple, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}><Icon type="send" size={15} color={C.white} /></div>
+      </div>
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PRIMARY SCREENS
+// ══════════════════════════════════════════════════════════════════════════════
+const ScreenOverview = ({ openDrawer }) => (
+  <div>
+    <div style={{ background: `linear-gradient(140deg,${C.navy} 0%,#2A3F6B 100%)`, borderRadius: 18, padding: "14px 16px", marginBottom: 14 }}>
+      <div style={{ fontSize: 10, color: "#8BA4C8", fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.6, marginBottom: 8 }}>Today • Mar 30, 2026</div>
+      <div style={{ display: "flex", gap: 8 }}>
+        {[{ l: "Active sites", v: "5" }, { l: "On-site now", v: "47" }, { l: "Open alerts", v: "2" }].map((s, i) => (
+          <div key={s.l} style={{ flex: 1, background: i === 2 ? "rgba(239,68,68,0.15)" : "rgba(255,255,255,0.08)", borderRadius: 9, padding: "9px 6px", textAlign: "center" }}>
+            <div style={{ fontSize: 20, fontWeight: 700, color: i === 2 ? "#FCA5A5" : C.white }}>{s.v}</div>
+            <div style={{ fontSize: 9, color: "#8BA4C8", marginTop: 2 }}>{s.l}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+    <div style={{ background: C.red + "08", border: `1px solid ${C.red}22`, borderRadius: 12, padding: "9px 13px", marginBottom: 14, display: "flex", alignItems: "center", gap: 10 }}>
+      <Icon type="warning" size={15} color={C.red} />
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: C.red }}>Clearwater Condos — permit delayed</div>
+        <div style={{ fontSize: 11, color: C.midGray }}>Crew reassignment needed for next week</div>
+      </div>
+      <Icon type="chevron" size={14} color={C.red} />
+    </div>
+    <SectionLabel>All projects</SectionLabel>
+    {[
+      { n: "Riverside Residence", p: 64, w: 12, s: "On track", c: C.teal },
+      { n: "Bayshore Office", p: 31, w: 22, s: "On track", c: C.teal },
+      { n: "Lakewood Reno", p: 89, w: 6, s: "Ahead", c: C.green },
+      { n: "Clearwater Condos", p: 15, w: 4, s: "Delayed", c: C.red },
+    ].map((p, i) => (
+      <div key={i} style={{ background: C.offWhite, borderRadius: 11, padding: "11px 13px", marginBottom: 7 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+          <div><div style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{p.n}</div><div style={{ fontSize: 10, color: C.midGray }}>{p.w} workers</div></div>
+          <Badge color={p.c}>{p.s}</Badge>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+          <div style={{ flex: 1 }}><Bar pct={p.p} color={p.c} /></div>
+          <span style={{ fontSize: 11, fontWeight: 600, color: C.darkGray }}>{p.p}%</span>
+        </div>
+      </div>
+    ))}
+    <SectionLabel action="Full report" onAction={() => openDrawer("daily_report")}>Today's AI report</SectionLabel>
+    <div style={{ background: C.offWhite, borderRadius: 11, padding: "11px 13px" }}>
+      <div style={{ fontSize: 12, color: C.text, lineHeight: 1.65, marginBottom: 10 }}>Strong day. Electrical complete on 2nd floor. HVAC started. 12 on site. Budget tracking $7K under. Zero incidents.</div>
+      <div style={{ display: "flex", gap: 7 }}>
+        <div style={{ flex: 1, padding: "7px 0", textAlign: "center", borderRadius: 9, background: C.navy, color: C.white, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Send to clients</div>
+        <div style={{ flex: 1, padding: "7px 0", textAlign: "center", borderRadius: 9, border: `1px solid ${C.lightGray}`, color: C.darkGray, fontSize: 12, cursor: "pointer" }}>Download PDF</div>
+      </div>
+    </div>
+  </div>
+);
+
+const ScreenPeople = () => {
+  const [view, setView] = useState("Crew");
+  return (
+    <div>
+      <Seg options={["Crew", "Attendance", "Subcontractors"]} value={view} onChange={setView} />
+      {view === "Crew" && (
+        <div>
+          <div style={{ display: "flex", gap: 4, marginBottom: 12, overflowX: "auto" }}>
+            {["Mon 30", "Tue 31", "Wed 1", "Thu 2", "Fri 3"].map((d, i) => <div key={d} style={{ flex: 1, padding: "6px 0", textAlign: "center", borderRadius: 8, background: i === 0 ? C.navy : C.offWhite, color: i === 0 ? C.white : C.midGray, fontSize: 10, fontWeight: 600, minWidth: 46, cursor: "pointer" }}>{d}</div>)}
+          </div>
+          {[
+            { name: "James Wu", role: "Foreman", time: "6AM–6PM", status: "On site", color: C.green },
+            { name: "Mike Dawson", role: "Electrician", time: "7AM–4PM", status: "On site", color: C.teal },
+            { name: "Sarah Kim", role: "HVAC Tech", time: "8AM–5PM", status: "On site", color: C.blue },
+            { name: "Tom Rivera", role: "Drywaller", time: "7AM–3PM", status: "Off site", color: C.midGray },
+            { name: "Lisa Park", role: "Inspector", time: "2PM–4PM", status: "Scheduled", color: PC },
+          ].map((c, i, arr) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: i < arr.length - 1 ? `1px solid ${C.lightGray}` : "none" }}>
+              <div style={{ width: 34, height: 34, borderRadius: "50%", background: c.color + "15", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Icon type="person" size={15} color={c.color} /></div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 500, color: C.text }}>{c.name}</div>
+                <div style={{ fontSize: 11, color: C.midGray }}>{c.role} • {c.time}</div>
+              </div>
+              <Badge color={c.color}>{c.status}</Badge>
+            </div>
+          ))}
+        </div>
+      )}
+      {view === "Attendance" && (
+        <div>
+          <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
+            <Tile label="On site" value="12" color={C.teal} icon="users" />
+            <Tile label="Avg hours" value="8.4h" color={C.navy} icon="time" />
+            <Tile label="Late" value="1" color={C.amber} icon="warning" />
+          </div>
+          {[
+            { name: "James Wu", in: "6:02 AM", out: "—", hours: "8.4h", color: C.green, status: "Active" },
+            { name: "Mike Dawson", in: "7:05 AM", out: "—", hours: "6.9h", color: C.green, status: "Active" },
+            { name: "Sarah Kim", in: "8:12 AM", out: "—", hours: "5.8h", color: C.teal, status: "Active" },
+            { name: "Tom Rivera", in: "7:00 AM", out: "3:00 PM", hours: "8.0h", color: C.midGray, status: "Left" },
+            { name: "Luis Perez", in: "8:45 AM", out: "—", hours: "5.2h", color: C.amber, status: "Late" },
+          ].map((w, i, arr) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 0", borderBottom: i < arr.length - 1 ? `1px solid ${C.lightGray}` : "none" }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: w.color, flexShrink: 0 }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 500, color: C.text }}>{w.name}</div>
+                <div style={{ fontSize: 11, color: C.midGray }}>In {w.in}{w.out !== "—" ? ` · Out ${w.out}` : ""}</div>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: C.navy }}>{w.hours}</div>
+                <Badge color={w.color}>{w.status}</Badge>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {view === "Subcontractors" && (
+        <div>
+          {[
+            { n: "Apex Electrical", t: "Electrical", s: "On site", p: 78, score: 94, coi: "Apr 30", w: true, c: C.teal },
+            { n: "CoolAir HVAC", t: "HVAC", s: "Scheduled", p: 45, score: 81, coi: "Jun 15", w: true, c: C.blue },
+            { n: "Premier Plumbing", t: "Plumbing", s: "Inspection", p: 92, score: 88, coi: "EXPIRED", w: false, c: C.red },
+            { n: "StoneWorks", t: "Masonry", s: "Complete", p: 100, score: 96, coi: "Dec 31", w: true, c: C.green },
+          ].map((s, i) => (
+            <div key={i} style={{ background: C.offWhite, borderRadius: 11, padding: "11px 13px", marginBottom: 8 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                <div><div style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{s.n}</div><div style={{ fontSize: 10, color: C.midGray }}>{s.t}</div></div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 17, fontWeight: 700, color: s.c }}>{s.score}</div>
+                  <div style={{ fontSize: 9, color: C.midGray }}>score</div>
+                </div>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 4 }}>
+                <div style={{ flex: 1 }}><Bar pct={s.p} color={s.c} /></div>
+                <span style={{ fontSize: 10, color: C.darkGray }}>{s.p}%</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ fontSize: 10, color: s.coi === "EXPIRED" ? C.red : C.midGray }}>COI: <strong>{s.coi}</strong></span>
+                <Badge color={s.c}>{s.s}</Badge>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ScreenFinance = () => {
+  const [view, setView] = useState("Budget");
+  return (
+    <div>
+      <Seg options={["Budget", "Revenue", "Materials"]} value={view} onChange={setView} />
+      {view === "Budget" && (
+        <div>
+          <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+            <Tile label="Budget" value="$485K" color={C.navy} icon="finance" />
+            <Tile label="Spent" value="$312K" color={PC} icon="chart" />
+            <Tile label="Projected" value="$478K" color={C.green} icon="check" />
+          </div>
+          <div style={{ background: C.green + "08", borderRadius: 9, padding: "7px 11px", marginBottom: 12, display: "flex", gap: 6, alignItems: "center" }}>
+            <Icon type="check" size={13} color={C.green} /><span style={{ fontSize: 12, color: C.green }}>Under budget by $7K (1.4%)</span>
+          </div>
+          {[{ c: "Labor", b: 180, a: 165, col: C.teal }, { c: "Materials", b: 150, a: 98, col: C.blue }, { c: "Equipment", b: 55, a: 32, col: PC }, { c: "Subcontractors", b: 80, a: 12, col: C.navy }, { c: "Permits", b: 20, a: 5, col: C.purple }].map((r, i) => (
+            <div key={i} style={{ marginBottom: 9 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 3 }}>
+                <span style={{ color: C.darkGray }}>{r.c}</span>
+                <span style={{ color: C.text, fontWeight: 500 }}>${r.a}K / <span style={{ color: C.midGray }}>${r.b}K</span></span>
+              </div>
+              <Bar pct={Math.round((r.a / r.b) * 100)} color={r.col} />
+            </div>
+          ))}
+        </div>
+      )}
+      {view === "Revenue" && (
+        <div>
+          <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
+            <Tile label="Total revenue" value="$1.2M" color={C.navy} icon="finance" />
+            <Tile label="Avg margin" value="18.4%" color={C.green} icon="chart" />
+          </div>
+          {[{ p: "Riverside Residence", r: "$485K", m: "19%", s: "Active", c: C.teal }, { p: "Bayshore Office", r: "$320K", m: "22%", s: "Active", c: C.blue }, { p: "Lakewood Reno", r: "$210K", m: "15%", s: "Closing", c: PC }, { p: "Clearwater Condos", r: "$185K", m: "12%", s: "Planning", c: C.purple }].map((p, i, arr) => (
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i < arr.length - 1 ? `1px solid ${C.lightGray}` : "none" }}>
+              <div><div style={{ fontSize: 13, fontWeight: 500, color: C.text }}>{p.p}</div><div style={{ fontSize: 11, color: C.midGray }}>Margin: {p.m}</div></div>
+              <div style={{ textAlign: "right" }}><div style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{p.r}</div><Badge color={p.c}>{p.s}</Badge></div>
+            </div>
+          ))}
+        </div>
+      )}
+      {view === "Materials" && (
+        <div>
+          <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
+            <Tile label="Open POs" value="4" color={C.navy} icon="order" />
+            <Tile label="Pending" value="$28K" color={PC} icon="clock" />
+          </div>
+          {[
+            { item: "Drywall — 320 sheets", vendor: "USG Direct", amount: "$4,480", status: "PO sent", eta: "Apr 6", color: C.teal },
+            { item: "Interior trim lumber", vendor: "Home Depot Pro", amount: "$2,200", status: "Awaiting quote", eta: "Apr 10", color: PC },
+            { item: "Light fixtures — 24 units", vendor: "Lighting World", amount: "$3,600", status: "Approved", eta: "Apr 8", color: C.green },
+            { item: "Plumbing kit", vendor: "Ferguson", amount: "$1,840", status: "Delivered", eta: "Mar 28", color: C.green },
+          ].map((o, i) => (
+            <div key={i} style={{ background: C.offWhite, borderRadius: 10, padding: "10px 12px", marginBottom: 6 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: C.navy }}>{o.item}</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: C.teal }}>{o.amount}</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span style={{ fontSize: 10, color: C.midGray }}>{o.vendor} • ETA {o.eta}</span>
+                <Badge color={o.color}>{o.status}</Badge>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ScreenSite = () => {
+  const [view, setView] = useState("Punch list");
+  const [room, setRoom] = useState(0);
+  const rooms = ["Bed", "Kitchen", "Living", "Bath"];
+  const punch = [
+    [{ desc: "Touch-up paint — NW corner", sev: "Minor", status: "Open", color: C.amber }, { desc: "Door latch misaligned", sev: "Low", status: "Open", color: C.blue }],
+    [{ desc: "Cabinet door gap", sev: "Medium", status: "Open", color: PC }, { desc: "Backsplash grout crack", sev: "Low", status: "Open", color: C.blue }],
+    [{ desc: "Outlet cover plate missing", sev: "Low", status: "Fixed", color: C.green }],
+    [{ desc: "Shower door seal incomplete", sev: "High", status: "Open", color: C.red }],
+  ];
+  return (
+    <div>
+      <Seg options={["Punch list", "Access"]} value={view} onChange={setView} />
+      {view === "Punch list" && (
+        <div>
+          <div style={{ display: "flex", gap: 4, marginBottom: 12 }}>
+            {rooms.map((r, i) => <div key={r} onClick={() => setRoom(i)} style={{ flex: 1, padding: "6px 0", textAlign: "center", borderRadius: 8, background: room === i ? C.navy : C.offWhite, color: room === i ? C.white : C.midGray, fontSize: 10, fontWeight: 600, cursor: "pointer" }}>{r}</div>)}
+          </div>
+          {punch[room].map((item, i) => (
+            <div key={i} style={{ background: C.offWhite, borderRadius: 11, padding: "10px 13px", marginBottom: 7, borderLeft: `3px solid ${item.color}` }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                <span style={{ fontSize: 12, fontWeight: 500, color: C.text }}>{item.desc}</span>
+                <Badge color={item.color}>{item.status}</Badge>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <Badge color={item.color}>{item.sev}</Badge>
+                <div style={{ display: "flex", gap: 5 }}>
+                  <div style={{ width: 28, height: 28, borderRadius: 7, background: C.blue + "10", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><Icon type="camera" size={13} color={C.blue} /></div>
+                  <div style={{ width: 28, height: 28, borderRadius: 7, background: C.green + "10", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><Icon type="check" size={13} color={C.green} /></div>
+                </div>
+              </div>
+            </div>
+          ))}
+          <div style={{ padding: "10px 0", textAlign: "center", borderRadius: 11, border: `1.5px dashed ${C.lightGray}`, color: PC, fontSize: 13, fontWeight: 600, cursor: "pointer", marginTop: 4 }}>+ Add defect</div>
+        </div>
+      )}
+      {view === "Access" && (
+        <div>
+          <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
+            <Tile label="Enrolled" value="24" color={C.navy} icon="face" />
+            <Tile label="On site" value="12" color={C.teal} icon="building" />
+            <Tile label="Denied" value="1" color={C.red} icon="warning" />
+          </div>
+          {[
+            { n: "John Carter", r: "Owner", a: "All — 24/7", on: true },
+            { n: "Maria Lopez", r: "PM", a: "All — 6AM-8PM", on: true },
+            { n: "Tom Chen", r: "Electrician", a: "Zone A — M-F", on: true },
+            { n: "Lisa Park", r: "Inspector", a: "Zone A,B — Apr 2", on: false },
+          ].map((u, i, arr) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 0", borderBottom: i < arr.length - 1 ? `1px solid ${C.lightGray}` : "none" }}>
+              <div style={{ width: 30, height: 30, borderRadius: "50%", background: u.on ? C.teal + "12" : C.lightGray, display: "flex", alignItems: "center", justifyContent: "center" }}><Icon type="face" size={13} color={u.on ? C.teal : C.midGray} /></div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 12, fontWeight: 500, color: C.text }}>{u.n} <span style={{ color: C.midGray, fontSize: 10 }}>• {u.r}</span></div>
+                <div style={{ fontSize: 10, color: C.midGray }}>{u.a}</div>
+              </div>
+              <div style={{ width: 7, height: 7, borderRadius: "50%", background: u.on ? C.green : C.midGray }} />
+            </div>
+          ))}
+          <div style={{ marginTop: 12, padding: "9px 0", textAlign: "center", borderRadius: 10, background: C.navy, color: C.white, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>+ Enroll worker</div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DRAWER MENU (hamburger)
+// ══════════════════════════════════════════════════════════════════════════════
+const DrawerMenu = ({ openDrawer }) => (
+  <div>
+    <DrawerRow icon="msg"      label="Client messages"       sub="1 unread — Riverside Residence"        color={C.teal}   badge={{ text: "1", color: C.teal }}       onPress={() => openDrawer("messages")} />
+    <DrawerRow icon="doc"      label="Documents"             sub="Contracts, permits, change orders"     color={C.blue}                                               onPress={() => openDrawer("docs")} />
+    <DrawerRow icon="drone"    label="Drone & IoT"           sub="Live feed active • 4 sensors"          color={C.navy}   badge={{ text: "● Live", color: C.green }} onPress={() => openDrawer("drone")} />
+    <DrawerRow icon="cube"     label="BIM 3D viewer"         sub="12,847 elements • 3 clashes"           color={C.purple} badge={{ text: "3 clashes", color: C.red }} onPress={() => openDrawer("bim")} />
+    <DrawerRow icon="shield"   label="Warranty queue"        sub="3 open — 1 high priority"              color={PC}       badge={{ text: "Urgent", color: C.red }}   onPress={() => openDrawer("warranty_q")} />
+    <DrawerRow icon="change"   label="Change orders"         sub="1 pending client approval"             color={PC}                                                   onPress={() => openDrawer("changes")} />
+    <DrawerRow icon="annotate" label="Photo markup"          sub="Annotate and share site photos"        color={C.blue}                                               onPress={() => openDrawer("annotate")} />
+    <DrawerRow icon="safety"   label="Safety log"            sub="47 days incident-free"                 color={C.green}  badge={{ text: "All clear", color: C.green }} onPress={() => openDrawer("safety")} />
+    <DrawerRow icon="search"   label="Smart search"          sub="Projects, crew, materials, docs"       color={C.midGray}                                            onPress={() => openDrawer("search")} />
+    <DrawerRow icon="settings" label="Settings"              sub="Team, billing, notifications"          color={C.midGray}                                            onPress={() => openDrawer("settings")} last />
+  </div>
+);
+
+// ══════════════════════════════════════════════════════════════════════════════
+// NAV + APP
+// ══════════════════════════════════════════════════════════════════════════════
+const TABS = [
+  { key: "overview", icon: "dashboard", label: "Overview", Screen: ScreenOverview },
+  { key: "people",   icon: "users",     label: "People",   Screen: ScreenPeople },
+  { key: "finance",  icon: "finance",   label: "Finance",  Screen: ScreenFinance },
+  { key: "site",     icon: "building",  label: "Site",     Screen: ScreenSite },
+];
+
+const DRAWER_MAP = (openDrawer) => ({
+  messages:  { title: "Client messages",   subtitle: "John Carter • Riverside Residence", content: <DrawerClientMessages /> },
+  docs:      { title: "Documents",         subtitle: "All projects",                      content: <DrawerDocs /> },
+  drone:     { title: "Drone & IoT",       subtitle: "Live site monitoring",              content: <DrawerDroneIoT /> },
+  bim:       { title: "BIM 3D viewer",     subtitle: "Riverside Residence",               content: <DrawerBIM /> },
+  warranty_q:{ title: "Warranty queue",    subtitle: "3 open claims",                     content: <DrawerWarrantyQueue /> },
+  changes:   { title: "Change orders",     subtitle: "Riverside Residence",               content: <DrawerChangeOrders /> },
+  annotate:  { title: "Photo markup",      subtitle: "Annotate and share",                content: <DrawerPhotoMarkup /> },
+  safety:    { title: "Safety log",        subtitle: "Riverside Residence",               content: <DrawerSafetyLog /> },
+  search:    { title: "Search",            subtitle: null,                                content: <DrawerSearch /> },
+  settings:  { title: "Settings",         subtitle: null,                                content: <div style={{ padding: "20px" }}><div style={{ color: C.midGray, fontSize: 13 }}>Settings coming soon</div></div> },
+  ai:        { title: "AI assistant",      subtitle: "Across all 5 projects",             content: <DrawerAI /> },
+  menu:      { title: "More tools",        subtitle: null,                                content: <DrawerMenu openDrawer={openDrawer} /> },
+});
+
+function CompanyApp() {
+  const [tabIdx, setTabIdx] = useState(0);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerKey, setDrawerKey] = useState(null);
+
+  const openDrawer = (key) => { setDrawerKey(key); setDrawerOpen(true); };
+  const closeDrawer = () => setDrawerOpen(false);
+
+  const { Screen } = TABS[tabIdx];
+  const map = DRAWER_MAP(openDrawer);
+  const active = drawerKey && map[drawerKey];
+  const aiOpen = drawerKey === "ai" && drawerOpen;
+
+  return (
+    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif", maxWidth: 400, margin: "0 auto" }}>
+      <div style={{ background: C.white, borderRadius: 32, border: `1px solid ${C.lightGray}`, overflow: "hidden", boxShadow: "0 8px 40px rgba(0,0,0,0.1)", position: "relative" }}>
+
+        {/* Status bar */}
+        <div style={{ background: C.navy, padding: "10px 18px 14px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+            <span style={{ fontWeight: 700, color: C.white, fontSize: 12 }}>9:41</span>
+            <span style={{ letterSpacing: 1.5, fontSize: 9, fontWeight: 700, color: "#8BA4C8" }}>BUILDSYNC — COMPANY</span>
+            <span style={{ color: C.white, fontSize: 10 }}>●●●</span>
+          </div>
+          <div style={{ fontSize: 11, color: "#8BA4C8", textAlign: "center" }}>BuildRight Co. • 5 active projects</div>
+        </div>
+
+        {/* Content */}
+        <div style={{ padding: "14px 16px 12px", minHeight: 468, maxHeight: 468, overflowY: "auto" }}>
+          <Screen openDrawer={openDrawer} />
+        </div>
+
+        {/* FAB — AI Assistant */}
+        <div style={{ position: "relative" }}>
+          <div onClick={() => aiOpen ? closeDrawer() : openDrawer("ai")} style={{ position: "absolute", bottom: 14, right: 16, zIndex: 9, width: 50, height: 50, borderRadius: "50%", background: `linear-gradient(135deg, ${C.purple} 0%, #9B51E0 100%)`, boxShadow: aiOpen ? `0 0 0 4px ${C.purple}30, 0 4px 20px ${C.purple}60` : `0 4px 18px ${C.purple}50`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "box-shadow 0.2s, transform 0.2s", transform: aiOpen ? "scale(0.93)" : "scale(1)" }}>
+            {!aiOpen && <div style={{ position: "absolute", inset: -5, borderRadius: "50%", border: `2px solid ${C.purple}40`, animation: "fabPulse 2.2s ease-out infinite" }} />}
+            <Icon type="aibot" size={22} color={C.white} />
+          </div>
+          {!aiOpen && (
+            <div style={{ position: "absolute", bottom: 22, right: 72, background: C.navy, color: C.white, fontSize: 11, fontWeight: 600, padding: "5px 10px", borderRadius: 20, whiteSpace: "nowrap", pointerEvents: "none", opacity: 0.88, boxShadow: "0 2px 10px rgba(0,0,0,0.15)" }}>
+              Ask AI
+              <div style={{ position: "absolute", right: -5, top: "50%", transform: "translateY(-50%)", width: 0, height: 0, borderTop: "5px solid transparent", borderBottom: "5px solid transparent", borderLeft: `5px solid ${C.navy}` }} />
+            </div>
+          )}
+        </div>
+        <style>{`@keyframes fabPulse { 0% { transform: scale(1); opacity: 0.7; } 70% { transform: scale(1.55); opacity: 0; } 100% { transform: scale(1.55); opacity: 0; } }`}</style>
+
+        {/* Bottom nav */}
+        <div style={{ display: "flex", alignItems: "center", borderTop: `1px solid ${C.lightGray}`, background: C.white, padding: "6px 0 14px" }}>
+          {TABS.map((tab, i) => (
+            <div key={tab.key} onClick={() => setTabIdx(i)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, cursor: "pointer", padding: "4px 0" }}>
+              <div style={{ width: 40, height: 28, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 9, background: tabIdx === i && !drawerOpen ? PC + "12" : "transparent" }}>
+                <Icon type={tab.icon} size={19} color={tabIdx === i && !drawerOpen ? PC : C.midGray} />
+              </div>
+              <div style={{ fontSize: 9, color: tabIdx === i && !drawerOpen ? PC : C.midGray, fontWeight: tabIdx === i && !drawerOpen ? 700 : 400 }}>{tab.label}</div>
+            </div>
+          ))}
+          <div onClick={() => openDrawer("menu")} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, cursor: "pointer", padding: "4px 0" }}>
+            <div style={{ width: 40, height: 28, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 9, background: drawerOpen && drawerKey === "menu" ? PC + "12" : "transparent", position: "relative" }}>
+              <Icon type="menu" size={19} color={drawerOpen && drawerKey === "menu" ? PC : C.midGray} />
+              <div style={{ position: "absolute", top: 3, right: 6, width: 7, height: 7, borderRadius: "50%", background: C.red, border: `1.5px solid ${C.white}` }} />
+            </div>
+            <div style={{ fontSize: 9, color: drawerOpen && drawerKey === "menu" ? PC : C.midGray, fontWeight: drawerOpen && drawerKey === "menu" ? 700 : 400 }}>More</div>
+          </div>
+        </div>
+
+        {/* Drawer */}
+        {active && (
+          <Drawer open={drawerOpen} onClose={closeDrawer} title={active.title} subtitle={active.subtitle}>
+            {active.content}
+          </Drawer>
+        )}
+      </div>
+    </div>
+  );
+}
+
+</script>
+
+</body>
+</html>
