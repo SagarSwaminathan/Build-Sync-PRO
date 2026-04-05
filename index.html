@@ -1645,6 +1645,12 @@ function CompanyApp() {
 }
 
 </script>
-
+<script>
+  window.addEventListener("load", () => {
+    if (window.va) {
+      window.va('track', 'pageview');
+    }
+  });
+</script>
 </body>
 </html>
